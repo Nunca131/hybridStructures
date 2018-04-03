@@ -1,0 +1,109 @@
+\documentclass{article}
+
+\usepackage{xcolor}
+\usepackage{algorithm2e}
+\usepackage{algorithmic}
+
+
+\newcommand{\TODO}[1]{\begingroup\color{red}#1\endgroup}
+\newcommand{\NR}[1]{\begingroup\color{orange}#1\endgroup}
+\newcommand{\PFS}[1]{\begingroup\color{green}#1\endgroup}
+
+
+
+\begin{document}
+
+\title{\TODO{some fancy title}}
+
+\maketitle
+
+
+
+Construction of R-matrices:
+
+add new node $z$ which is a recombinant of $x$ and $y$ to the label set $V$ 
+and calculate their distances:
+
+$d_{zu} = a * d_{xu} + (1-a) * d_{yu}$ for $u \ne x,y$\\
+$d_{zx} = (1-a) * d_{xy}$ \\
+$d_{zy} = a * d_{xy}$ \\
+
+Here, $a$ depicts the mixture of $x$ and $y$. 
+In each step simulate the mutation of a character $p \in V$ by adding $\delta_p$
+to the distances as follows:
+
+$d_{pq}' = d_{pq} + \delta_p + \delta_q, p,q \in V$
+
+
+
+\begin{algorithm}[H]
+\caption{Old recognition algorithm for R matrices}
+ \SetAlgoLined
+ \For{$\{x,y,z\} \in V$}{
+  \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
+   $a_{u,v} := \frac{(d_{uz}+d_{vy})-(d_{vz}+d_{uy})}{(d_{ux}+d_{vy})-(d_{vz}+d_{uy})}$\;
+  }
+  \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
+   \eIf{$a \neq 0,1$}{
+   $\delta_z = \frac{1}{2}(d_{xz}+d_{yz}-d_{xy})$\;
+   $\dot{d_{xy}} = d_{uz} - a*d_{ux} - (1-a)d_{uy}-2\delta_z + a*d_{xz} + (1-a)*d_{yz}$\;
+   $\delta_x = d_{xz} - (1-a)*d_{xy} - \delta_z$\;
+   $\delta_y = d_{yz} - a*\delta_z$\;
+  }{
+   \TODO{$a=0,a=1$ what happens then?}\;
+  }
+  $\forall p,q\in V\setminus\{x,y,z\}, p\neq q: d_{pq} = d_{pq}-\delta_p-\delta_q$\;
+  delete row and column $z$ form $D$\;
+  }  
+ }
+\end{algorithm}
+
+
+
+
+
+\begin{algorithm}[H]
+\caption{Approximation recognition algorithm for R matrices}
+ \SetAlgoLined
+ \For{$\{x,y,z\} \in V$}{
+  \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
+   $a_{u,v} := \frac{(d_{uz}+d_{vy})-(d_{vz}+d_{uy})}{(d_{ux}+d_{vy})-(d_{vz}+d_{uy})}$\;
+  }
+  $\bar{a}_{xyz} = \frac{2}{(n-3)(n-4)} * a_{uv}$\;
+  $\sigma_{xyz} = sdv(a_{uv})$\;  
+ }
+ sort by $\sigma_{xyz}$ in increasing order\;
+ \tcc{select greedy}
+ \If{$\bar{a}_{xyz} \in [0,1]$}{accept\;}
+ \If{$-\sigma_{xyz} < \bar{a}_{xyz} < 0 $}{accept\;}
+ \If{$1 < \bar{a}_{xyz} < 1+\sigma_{xyz}$}{accept\;}
+ 
+ \tcc{now we know the best $\{x,y,z\}$ and need to remove $z$}
+ 
+ \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
+ 
+   \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
+   \eIf{$a \neq 0,1$}{
+   $\delta_z = \frac{1}{2}(d_{xz}+d_{yz}-d_{xy})$\;
+   $\dot{d_{xy}} = d_{uz} - a*d_{ux} - (1-a)d_{uy}-2\delta_z + a*d_{xz} + (1-a)*d_{yz}$\;
+   $\delta_x = d_{xz} - (1-a)*d_{xy} - \delta_z$\;
+   $\delta_y = d_{yz} - a*\delta_z$\;
+  }{
+   \If{$\bar{a}_{xyz} < 0$} {accept $\bar{a}_{xyz} = 0$\;}
+   \If{$\bar{a}_{xyz} > 1$} {accept $\bar{a}_{xyz} = 1$\;}
+  }
+  $\forall p,q\in V\setminus\{x,y,z\}, p\neq q: d_{pq} = d_{pq}-\delta_p-\delta_q$\;
+  delete row and column $z$ form $D$\;
+  }
+  }
+\end{algorithm}
+\begin{enumerate}
+ \item \TODO{check whether all brackets are correctly set} \\
+ \item \TODO{check whether $\dot{d_{xy}} = d_{uz} - a*d_{ux} - (1-a)d_{uy}-2\delta_z + a*d_{xz} + (1-a)*d_{yz}$ 
+conforms to the triangle inequality $\dot{d_{xy}} \geq  d_{xy}$?} \\
+ \item \TODO{Wenn Baum, haben wir das richtige Ergebnis? (sanity check) Was passiert bei Cherries?} \\
+ \item \TODO{NR: Test on simulated noisy data} \\
+ \item \TODO{put somewhere: $\forall d,\delta: d,\delta\geq 0$, otherwise: $d,\delta = 0$}
+\end{enumerate}
+
+\end{document}
