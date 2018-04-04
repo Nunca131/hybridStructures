@@ -85,15 +85,14 @@ R-metrics,
  \For{$\{x,y,z\} \in V$}{
   \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
    $a_{u,v} := 
-   \frac{(d_{uz}+d_{vy})-(d_{vz}+d_{uy})}{(d_{ux}+d_{vy})-(d_{vz}+d_{uy})}$\;
+   \frac{(d'_{uz}+d'_{vy})-(d'_{vz}+d'_{uy})}{(d'_{ux}+d'_{vy})-(d'_{vx}+d'_{uy})}$\;
   }
   \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
    \eIf{$a \neq 0,1$}{
-   $\delta_z \leftarrow \frac{1}{2}(d_{xz}+d_{yz}-d_{xy})$\;
-   $d_{xy} \leftarrow d_{uz} - a d_{ux} - (1-a)d_{uy}-2\delta_z + 
-         a d_{xz} + (1-a) d_{yz}$\;
-   $\delta_x \leftarrow d_{xz} - (1-a) d_{xy} - \delta_z$\;
-   $\delta_y \leftarrow d_{yz} - a \delta_z$\;
+   $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
+   $d_{xy} =$ \TODO{siehe Gleichung 11}\;
+   $\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
+   $\delta_y = d'_{yz} - a \delta_z$\;
   }{
    \TODO{$a=0,a=1$ what happens then?}\;
   }
@@ -112,7 +111,7 @@ R-metrics,
  \SetAlgoLined
  \For{$\{x,y,z\} \in V$}{
   \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
-   $a_{u,v} := \frac{(d_{uz}+d_{vy})-(d_{vz}+d_{uy})}{(d_{ux}+d_{vy})-(d_{vz}+d_{uy})}$\;
+   $a_{u,v} := \frac{(d'_{uz}+d'_{vy})-(d'_{vz}+d'_{uy})}{(d'_{ux}+d'_{vy})-(d'_{vx}+d'_{uy})}$\;
   }
   $\bar{a}_{xyz} = \frac{2}{(n-3)(n-4)} * a_{uv}$\;
   $\sigma_{xyz} = sdv(a_{uv})$\;  
@@ -129,10 +128,10 @@ R-metrics,
  
    \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
    \eIf{$a \neq 0,1$}{
-   $\delta_z = \frac{1}{2}(d_{xz}+d_{yz}-d_{xy})$\;
-   $\dot{d_{xy}} = d_{uz} - a*d_{ux} - (1-a)d_{uy}-2\delta_z + a*d_{xz} + (1-a)*d_{yz}$\;
-   $\delta_x = d_{xz} - (1-a)*d_{xy} - \delta_z$\;
-   $\delta_y = d_{yz} - a*\delta_z$\;
+   $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
+   $d_{xy} = $ \TODO{siehe Gleichung 11}\;
+   $\delta_x = d'_{xz} - (1-a)*d_{xy} - \delta_z$\;
+   $\delta_y = d'_{yz} - a*\delta_z$\;
   }{
    \If{$\bar{a}_{xyz} < 0$} {accept $\bar{a}_{xyz} = 0$\;}
    \If{$\bar{a}_{xyz} > 1$} {accept $\bar{a}_{xyz} = 1$\;}
@@ -144,8 +143,8 @@ R-metrics,
 \end{algorithm}
 \begin{enumerate}
  \item \TODO{check whether all brackets are correctly set} \\
- \item \TODO{check whether $\dot{d_{xy}} = d_{uz} - a*d_{ux} - (1-a)d_{uy}-2\delta_z + a*d_{xz} + (1-a)*d_{yz}$ 
-conforms to the triangle inequality $\dot{d_{xy}} \geq  d_{xy}$?} \\
+ \item \TODO{check whether $\d_{xy}$ 
+conforms to the triangle inequality $d_{xy} \leq d_{ux} + d_{uy}$?} \\
  \item \TODO{Wenn Baum, haben wir das richtige Ergebnis? (sanity check) Was passiert bei Cherries?} \\
  \item \TODO{NR: Test on simulated noisy data} \\
  \item \TODO{put somewhere: $\forall d,\delta: d,\delta\geq 0$, otherwise: $d,\delta = 0$}
