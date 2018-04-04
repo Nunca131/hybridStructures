@@ -74,33 +74,33 @@ proving that our construction the inequality above whenever.
 \subsection{From Recognition to Approximation} 
 
 In \cite{Prohaska:17a} we described an $O(|V|^5)$ algorithm to recognize 
-R-metrics,   
+R-metrics.    
 
 
 
 
 \begin{algorithm}[H]
 \caption{Old recognition algorithm for R matrices}
- \SetAlgoLined
- \For{$\{x,y,z\} \in V$}{
+\SetAlgoLined
+\For{$\{x,y,z\} \in V$}{
   \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
-   $a_{u,v} := 
-   \frac{(d_{uz}+d_{vy})-(d_{vz}+d_{uy})}{(d_{ux}+d_{vy})-(d_{vz}+d_{uy})}$\;
+    $a_{u,v} := 
+    \frac{(d_{uz}+d_{vy})-(d_{vz}+d_{uy})}{(d_{ux}+d_{vy})-(d_{vz}+d_{uy})}$\;
   }
   \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
-   \eIf{$a \neq 0,1$}{
-   $\delta_z \leftarrow \frac{1}{2}(d_{xz}+d_{yz}-d_{xy})$\;
-   $d_{xy} \leftarrow d_{uz} - a d_{ux} - (1-a)d_{uy}-2\delta_z + 
-         a d_{xz} + (1-a) d_{yz}$\;
-   $\delta_x \leftarrow d_{xz} - (1-a) d_{xy} - \delta_z$\;
-   $\delta_y \leftarrow d_{yz} - a \delta_z$\;
-  }{
-   \TODO{$a=0,a=1$ what happens then?}\;
-  }
-  $\forall p,q\in V\setminus\{x,y,z\}, p\neq q: d_{pq} = d_{pq}-\delta_p-\delta_q$\;
-  delete row and column $z$ form $D$\;
+    \eIf{$a \neq 0,1$}{
+      $\delta_z \leftarrow \frac{1}{2}(d_{xz}+d_{yz}-d_{xy})$\;
+      $d_{xy} \leftarrow d_{uz} - a d_{ux} - (1-a)d_{uy}-2\delta_z + 
+      a d_{xz} + (1-a) d_{yz}$\;
+      $\delta_x \leftarrow d_{xz} - (1-a) d_{xy} - \delta_z$\;
+      $\delta_y \leftarrow d_{yz} - a \delta_z$\;
+    }{
+      \TODO{$a=0,a=1$ what happens then?}\;
+    }
+    $\forall p,q\in V\setminus\{x,y,z\}, p\neq q: d_{pq} = d_{pq}-\delta_p-\delta_q$\;
+    delete row and column $z$ form $D$\;
   }  
- }
+}
 \end{algorithm}
 
 
@@ -150,6 +150,54 @@ conforms to the triangle inequality $\dot{d_{xy}} \geq  d_{xy}$?} \\
  \item \TODO{NR: Test on simulated noisy data} \\
  \item \TODO{put somewhere: $\forall d,\delta: d,\delta\geq 0$, otherwise: $d,\delta = 0$}
 \end{enumerate}
+
+
+
+
+
+\subsection*{Special Cases} 
+
+Recognizing the special cases $a =0$ and $a =1$, respectively.
+
+Equ.(9) of \cite{Prohaska:17a} implies that $a=0$ iff 
+$d'_{uz}-d'_{vz} = d'_{uy}-d'_{vy}$ for all $y$ and $a=1$ iff 
+$d'_{uz}-d'_{vz} = d'_{ux}-d'_{vx}$.
+
+It makes sense therefore, to capture these cases upfront. In fact the two
+cases are effectively the same, identifying $y$ and $x$, respectively, as
+the sole ancestral branches, corresponds to a tree-like speciation. 
+
+In this case we know that $d'_{xz}=\delta_x+\delta_z$ and 
+$d'_{ux}-d'_{uz}=\delta_x-\delta_z$, whence 
+$d'_{xz}+d'_{ux}-d'_{uz}=2\delta_x$
+and 
+$d'_{xz}+d'_{uz}-d'_{ux}=2\delta_y$. 
+For numerical stability it is advisable to first compute 
+\begin{equation} 
+  C := \frac{1}{|V|-2} \sum_{u\in V\setminus\{x,y\}} (d'_{ux}-d'_{uz})
+\end{equation} 
+and then choose the consensus value $2\delta_x = d'_{xz}+C$ and 
+$2\delta_x = d'_{xz}-C$.
+
+
+
+\begin{algorithm}[H]
+\caption{alg:Tree-Like-Step}
+ \SetAlgoLined
+ \For{$\{x,z\} \subseteq V$}{
+   \For{$\{u,v\}\in V\setminus\{x,z\}$}{ 
+     $\epsilon_{xz} += \Vert (d_{vz}-d_{uz})- (d_{vx}-d_{ux}) \Vert$\;
+   }   
+ }
+ Determine minimum of $\epsilon_{xz}$;
+ \If{$\epsilon_{xz}<\varepsilon$}{
+   compute $C$, $\delta_x$, $\delta_z$ as above\;
+   record ``divergence of $(x,z)$ with $\delta_z$ and $\delta_z$''\;
+ \For{$u\in V\setminus\{x\}$}{
+   $d_{ux} \leftarrow  d_{ux}-\delta_x$\;} 
+ }
+\end{algorithm}
+
 
 \bibliographystyle{abbrv}      
 \bibliography{hybrid}   
