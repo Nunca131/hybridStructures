@@ -96,15 +96,32 @@ R-metrics.
   }{
    \TODO{$a=0,a=1$ what happens then?}\;
   }
-  $\forall p,q\in V\setminus\{x,y,z\}, p\neq q: d_{pq} = d_{pq}-\delta_p-\delta_q$\;
+  \PFS{$\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
+  $d_{up} = d_{pu} -\delta_p$\;
+  \TODO{note that $\delta_u=0$ for $u\in V\setminus\{x,y,z\}$}}
   delete row and column $z$ form $D$\;
   }  
 }
 \end{algorithm}
 
+We note that in each merge step we have $\delta_u=0$ for all $u\in
+V\setminus\{x,y,z\}$ 
 
 
 
+\begin{algorithm}[H]
+\caption{Top level recursion}
+ \SetAlgoLined
+ \While{$|V|\ge 4$}{ 
+   determine best tree-like step $(x,z)\to x$\;
+   determine best merge step $(x,z,y)\to(x,y)$\;
+   perform the better of tree-like or merge step\;
+   remove $z$ from $\mathbf{D}$ and $V$ 
+ }
+ compute initial tree for $|V|\le 3$ leaves\;
+\end{algorithm} 
+   
+ 
 
 \begin{algorithm}[H]
 \caption{Approximation recognition algorithm for R matrices}
@@ -141,6 +158,7 @@ R-metrics.
   }
   }
 \end{algorithm}
+
 \begin{enumerate}
  \item \TODO{check whether all brackets are correctly set} \\
  \item \TODO{check whether $d_{xy}$ 
