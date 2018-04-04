@@ -3,6 +3,7 @@
 \usepackage{xcolor}
 \usepackage{algorithm2e}
 \usepackage{algorithmic}
+\usepackage{amsmath}
 
 
 \newcommand{\TODO}[1]{\begingroup\color{red}#1\endgroup}
@@ -19,20 +20,62 @@
 
 
 
-Construction of R-matrices:
+\section{R-Metrics} 
 
-add new node $z$ which is a recombinant of $x$ and $y$ to the label set $V$ 
-and calculate their distances:
+In \cite{Prohaska:17a} we introduced R-metrics by means of a simple
+iterative scheme starting from a pair of points $\{x,y\}$ with a given
+distance $d_{xy}$.  First, an additional point $z$ is inserted as a
+``mixture'' of two parents $x$ and $y$ with a mixture ratio $a$. We assume
+that the distance of $d_{zu}$ correspondinly is a mixture of $d_{xu}$ and
+$d_{yu}$. More precisely, we assume that
+\begin{equation} 
+\begin{split} 
+  d_{zx} & = (1-a)  d_{xy} \\
+  d_{zy} & =   a    d_{xy} \\
+  d_{zu} & =   a    d_{xu} + (1-a)  d_{yu} \quad\textrm{for all}\ 
+                     u\in V\setminus\{ x,y \}
+\end{split}
+\end{equation} 
+Then all points diverge with arbitrary rates, i.e., 
+\begin{equation} 
+  d_{pq}' = d_{pq} + \delta_p + \delta_q \quad\textrm{for all}\ 
+  p,q \in V\cup\{z\} 
+\end{equation} 
+We say that a metric is an R-metric if it can be constructed in this
+manner.
 
-$d_{zu} = a * d_{xu} + (1-a) * d_{yu}$ for $u \ne x,y$\\
-$d_{zx} = (1-a) * d_{xy}$ \\
-$d_{zy} = a * d_{xy}$ \\
 
-Here, $a$ depicts the mixture of $x$ and $y$. 
-In each step simulate the mutation of a character $p \in V$ by adding $\delta_p$
-to the distances as follows:
+\subsection*{Properties of R-metrics} 
 
-$d_{pq}' = d_{pq} + \delta_p + \delta_q, p,q \in V$
+
+\TODO{It does not seem to be very easy to check whether R-metric are 
+totally decomposable or not. There is a reasonably easy 5-point condition
+for that, however:
+
+Set 
+\begin{equation} 
+  \alpha(tu|vw) := 
+  \max\left\{ d_{tu}+d_{vw}, d_{tv}+d_{uw}, d_{tw}+d_{vu} \right\} -
+             (d_{tu}+d_{vw})
+\end{equation} 
+
+Then Thm.6 of \cite{Bandelt:92} states that the metric is \emph{totally
+  decomposable} iff and only if for all $t,u,v,w,x\in V$ holds 
+\begin{equation} 
+  \alpha(tu|vw) \le \alpha(tx|vw)+\alpha(tu|vx)
+\end{equation} 
+
+CAN YOU PLEASE CHECK THIS NUMBERICALLY as a first step. If we see that the 
+R-metrics are totally decomposable in a large number of randomly generated
+examples it will be worth while to show that analytically, presumably by 
+proving that our construction the inequality above whenever.
+}
+
+\subsection{From Recognition to Approximation} 
+
+In \cite{Prohaska:17a} we described an $O(|V|^5)$ algorithm to recognize 
+R-metrics,   
+
 
 
 
@@ -41,14 +84,16 @@ $d_{pq}' = d_{pq} + \delta_p + \delta_q, p,q \in V$
  \SetAlgoLined
  \For{$\{x,y,z\} \in V$}{
   \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
-   $a_{u,v} := \frac{(d_{uz}+d_{vy})-(d_{vz}+d_{uy})}{(d_{ux}+d_{vy})-(d_{vz}+d_{uy})}$\;
+   $a_{u,v} := 
+   \frac{(d_{uz}+d_{vy})-(d_{vz}+d_{uy})}{(d_{ux}+d_{vy})-(d_{vz}+d_{uy})}$\;
   }
   \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
    \eIf{$a \neq 0,1$}{
-   $\delta_z = \frac{1}{2}(d_{xz}+d_{yz}-d_{xy})$\;
-   $\dot{d_{xy}} = d_{uz} - a*d_{ux} - (1-a)d_{uy}-2\delta_z + a*d_{xz} + (1-a)*d_{yz}$\;
-   $\delta_x = d_{xz} - (1-a)*d_{xy} - \delta_z$\;
-   $\delta_y = d_{yz} - a*\delta_z$\;
+   $\delta_z \leftarrow \frac{1}{2}(d_{xz}+d_{yz}-d_{xy})$\;
+   $d_{xy} \leftarrow d_{uz} - a d_{ux} - (1-a)d_{uy}-2\delta_z + 
+         a d_{xz} + (1-a) d_{yz}$\;
+   $\delta_x \leftarrow d_{xz} - (1-a) d_{xy} - \delta_z$\;
+   $\delta_y \leftarrow d_{yz} - a \delta_z$\;
   }{
    \TODO{$a=0,a=1$ what happens then?}\;
   }
@@ -105,5 +150,8 @@ conforms to the triangle inequality $\dot{d_{xy}} \geq  d_{xy}$?} \\
  \item \TODO{NR: Test on simulated noisy data} \\
  \item \TODO{put somewhere: $\forall d,\delta: d,\delta\geq 0$, otherwise: $d,\delta = 0$}
 \end{enumerate}
+
+\bibliographystyle{abbrv}      
+\bibliography{hybrid}   
 
 \end{document}
