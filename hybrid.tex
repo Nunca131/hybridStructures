@@ -96,7 +96,7 @@ proving that our construction the inequality above whenever.
 
 \subsection{From Recognition to Approximation} 
 
-In \cite{Prohaska:17a} we described an $O(|V|^5)$ algorithm to recognize 
+In \cite{Prohaska:17a} we described an $O(|V|^6)$ algorithm to recognize 
 R-metrics.    
 
 
@@ -113,7 +113,7 @@ R-metrics.
   \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
    \eIf{$a \neq 0,1$}{
    $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
-   $d_{xy} = \frac{(d'_{uz}-a*d'_{ux}-(1-a)*d'_{uy})-2*\delta_z + a*d'_{xz}+(1-a)*d'_{yz}}{2a(1-a)}$\;
+   $d_{xy} = \frac{(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})-2 \delta_z + a d'_{xz}+(1-a) d'_{yz}}{2a(1-a)}$\;
    $\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
    $\delta_y = d'_{yz} - a \delta_z$\;
   }{
@@ -169,7 +169,7 @@ V\setminus\{x,y,z\}$
    \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
    \eIf{$a \neq 0,1$}{
    $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
-   $d_{xy} = \frac{(d'_{uz}-a*d'_{ux}-(1-a)*d'_{uy})-2*\delta_z + a*d'_{xz}+(1-a)*d'_{yz}}{2a(1-a)}$\;
+   $d_{xy} = \frac{(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})-2 \delta_z + a d'_{xz}+(1-a) d'_{yz}}{2a(1-a)}$\;
    $\delta_x = d'_{xz} - (1-a)*d_{xy} - \delta_z$\;
    $\delta_y = d'_{yz} - a*\delta_z$\;
   }{
@@ -237,9 +237,6 @@ $2\delta_x = d'_{xz}-C$.
    $d_{ux} =  d_{ux}-\delta_x$\;} 
  }
 \end{algorithm}
-
-
-
 
 
 \bibliographystyle{abbrv}      
