@@ -19,10 +19,33 @@
 \maketitle
 
 
+\begin{abstract}
+ some cool abstract
+\end{abstract}
+
+\section{Introduction}
+
+\begin{itemize}
+ \item evolution of gene clusters as in~\cite{Prohaska:17a}
+ \item evolutionary events considered where either duplication 
+ or recombination events (since losses cannot be observed when 
+ we there is only one species under consideration)
+ \item recombination events can happen due to unequal crossing
+ over during mitosis
+ \item if the breakpoint is in a gene, the resulting gene is
+ a recombinant of its two parent genes ($x$ and $y$) who are
+ considered to be adjacent
+ \item here: lifting adjacency constraint of ''recombination''
+ \item application to languages: e.g. English lexicon is said
+ to contain 29\% Latin and as well as 29\% French words that 
+ did not derive from its Germanic root which only contributes 
+ with 25\%~\cite{Finkenstaedt:73}.
+\end{itemize}
+
 
 \section{R-Metrics} 
 
-In \cite{Prohaska:17a} we introduced R-metrics by means of a simple
+In~\cite{Prohaska:17a} we introduced R-metrics by means of a simple
 iterative scheme starting from a pair of points $\{x,y\}$ with a given
 distance $d_{xy}$.  First, an additional point $z$ is inserted as a
 ``mixture'' of two parents $x$ and $y$ with a mixture ratio $a$. We assume
@@ -90,7 +113,7 @@ R-metrics.
   \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
    \eIf{$a \neq 0,1$}{
    $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
-   $d_{xy} =$ \TODO{siehe Gleichung 11}\;
+   $d_{xy} = \frac{(d'_{uz}-a*d'_{ux}-(1-a)*d'_{uy})-2*\delta_z + a*d'_{xz}+(1-a)*d'_{yz}}{2a(1-a)}$\;
    $\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
    $\delta_y = d'_{yz} - a \delta_z$\;
   }{
@@ -146,15 +169,14 @@ V\setminus\{x,y,z\}$
    \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
    \eIf{$a \neq 0,1$}{
    $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
-   $d_{xy} = $ \TODO{siehe Gleichung 11}\;
+   $d_{xy} = \frac{(d'_{uz}-a*d'_{ux}-(1-a)*d'_{uy})-2*\delta_z + a*d'_{xz}+(1-a)*d'_{yz}}{2a(1-a)}$\;
    $\delta_x = d'_{xz} - (1-a)*d_{xy} - \delta_z$\;
    $\delta_y = d'_{yz} - a*\delta_z$\;
   }{
    \If{$\bar{a}_{xyz} < 0$} {accept $\bar{a}_{xyz} = 0$\;}
    \If{$\bar{a}_{xyz} > 1$} {accept $\bar{a}_{xyz} = 1$\;}
   }
-  $\forall p,q\in V\setminus\{x,y,z\}, p\neq q: d_{pq} = d_{pq}-\delta_p-\delta_q$\;
-  delete row and column $z$ form $D$\;
+  \NR{$\forall p,q\in V, p =\{x,y\}: d_{pq} = d_{pq}-\delta_p$}\;
   }
   }
 \end{algorithm}
@@ -181,7 +203,7 @@ $d'_{uz}-d'_{vz} = d'_{uy}-d'_{vy}$ for all $y$ and $a=1$ iff
 $d'_{uz}-d'_{vz} = d'_{ux}-d'_{vx}$.
 
 It makes sense therefore, to capture these cases upfront. In fact the two
-cases are effectively the same, identifying $y$ and $x$, respectively, as
+cases are effectively the same, identifying $x$ and $y$, respectively, as
 the sole ancestral branches, corresponds to a tree-like speciation. 
 
 In this case we know that $d'_{xz}=\delta_x+\delta_z$ and 
@@ -199,7 +221,8 @@ $2\delta_x = d'_{xz}-C$.
 
 
 \begin{algorithm}[H]
-\caption{alg:Tree-Like-Step}
+\caption{\NR{Cherry picking}}
+\label{alg:cherries}
  \SetAlgoLined
  \For{$\{x,z\} \subseteq V$}{
    \For{$\{u,v\}\in V\setminus\{x,z\}$}{ 
@@ -211,9 +234,12 @@ $2\delta_x = d'_{xz}-C$.
    compute $C$, $\delta_x$, $\delta_z$ as above\;
    record ``divergence of $(x,z)$ with $\delta_z$ and $\delta_z$''\;
  \For{$u\in V\setminus\{x\}$}{
-   $d_{ux} \leftarrow  d_{ux}-\delta_x$\;} 
+   $d_{ux} =  d_{ux}-\delta_x$\;} 
  }
 \end{algorithm}
+
+
+
 
 
 \bibliographystyle{abbrv}      
