@@ -20,13 +20,13 @@
 
 
 \begin{abstract}
- some cool abstract
+  super-cool abstract
 \end{abstract}
 
 \section{Introduction}
 
 \begin{itemize}
- \item evolution of gene clusters as in~\cite{Prohaska:17a}
+\item evolution of gene clusters as in~\cite{Prohaska:17a}
  \item evolutionary events considered where either duplication 
  or recombination events (since losses cannot be observed when 
  we there is only one species under consideration)
@@ -71,6 +71,43 @@ and $y$. If $a=1$ or $a=0$ we speak of a \emph{branch step} since $z$
 originates as a copy or $x$ or $y$, respectively. As noted in
 \cite{Prohaska:17a}, every additive metric is an R-metric. Conversely, an
 R-metric is additive if (and only if) all iterations are branching steps.
+
+The iterative construction above contains an obvious source of ambiguity.
+In every interation, a distance increment $\delta_u$ is added for all
+points, including also the ones that are not involved in a branch or merge
+event. Therefore several increments can be added to a point in consecutive
+non-event iterations. It is clear that there is no way in which these
+contributions can be disentangled: only their sum -- more precisely the sum
+of $\delta_u$-value added between two consecutive events involving $u$ can
+possibly be identified. Therefore we modify the construction rule such that
+$\delta_u=0$ for all $u\in V\setminus\{x,y,z\}$. In addition we stipulate
+$\delta_x=0$ for $a=0$ and $\delta_y=0$ for $a=1$, i.e., in branch events.
+
+The iterative steps in this modified construction for R-metrics can be
+encoded in an ordered list $\mathcal{S}$ of merge and branch
+events together with the pertinent parameters: \\
+\begin{itemize} 
+  \item[] A branch event is characterized by $[(x:z),\delta_x,\delta_z]$.
+  \item[] A merge event is characterized by
+    $[(x,y:z),a,\delta_x,\delta_y,\delta_z]$.
+\end{itemize} 
+We call such a list of events that explain $\mathcal{S}$ a scenario. 
+Since every metric on $|V|=3$ points is a additive and this described a
+tree, the first event of $\mathcal{S}$ can always be represented as a
+branch event. It is clear from the definition of R-metrics that every
+scenario $\mathcal{S}$ informs the recursions defining R-metrics and thus
+result in an R-metric. 
+
+\TODO{can we say something nice about equivalent scenarios? Conjecture:
+  Consider the transitive closure $\prec$ of the relation $\dot\prec$
+  defined by $\varphi\dot\prec\psi$ if event $\varphi$ appears before event
+  $\psi$ in the scenario $\mathcal{S}$ and there is a point $q$ that
+  appears in both $\varphi$ and $\psi$. Then $\mathcal{S}'$ generates the
+  same R-metric if and only if consists of the same events and induces the
+  same partial order $\prec$. Would be nice to prove something like this,
+  since it would imply that the reconstruction of the R-metric is unique in
+  a useful sense.} 
+
 
 \subsection*{Properties of R-metrics} 
 
@@ -167,19 +204,7 @@ algorithm $\mathbb{A}$ with the following properties:
 In practise the subdivide $\mathbb{A}$ into two steps: In the first stage,
 we extract a scenario $\mathcal{S}$ of merge and branch events from $d$. In
 the second stage, this scenario is converted into a distance
-matrix. Formally, a scenario $\mathcal{S}$ is a time-ordered list of merge
-and branch
-events together with the pertinent parameters: \\
-\begin{itemize} 
-  \item[] A branch event is characterized by $[(x:z),\delta_x,\delta_z]$.
-  \item[] A merge event is characterized by
-    $[(x,y:z),a,\delta_x,\delta_y,\delta_z]$.
-\end{itemize} 
-Since every metric on $|V|=3$ points is a additive and this described a
-tree, the first event of $\mathcal{S}$ can always be represented as a
-branch event. It is clear from the definition of R-metrics that every
-scenario $\mathcal{S}$ informs the recursions defining R-metrics and thus
-result in an R-metric. 
+matrix. 
 
 The non-trivial part is the inference of a scenario $\mathcal{S}$ from an
 arbitrary metric $d$ on $V$. Given a metric distance matrix $d$, we say
