@@ -1,10 +1,10 @@
 \documentclass{article}
 
 \usepackage{xcolor}
-\usepackage{algorithm2e}
-\usepackage{algorithmic}
+\usepackage[ruled]{algorithm2e}
+%\usepackage{algorithmic}
 \usepackage{amsmath}
-
+\usepackage{amsfonts}
 
 \newcommand{\TODO}[1]{\begingroup\color{red}#1\endgroup}
 \newcommand{\NR}[1]{\begingroup\color{orange}#1\endgroup}
@@ -64,9 +64,13 @@ Then all points diverge with arbitrary rates, i.e.,
   d_{pq}' = d_{pq} + \delta_p + \delta_q \quad\textrm{for all}\ 
   p,q \in V\cup\{z\} 
 \end{equation} 
-We say that a metric is an R-metric if it can be constructed in this
-manner.
-
+We say that a metric distance $d$ is an R-metric if it can be constructed
+in this manner. An iteration with $a\in(0,1)$ will be referred to as
+\emph{merge step}, since the product $z$ is a mixture of the parents $x$
+and $y$. If $a=1$ or $a=0$ we speak of a \emph{branch step} since $z$
+originates as a copy or $x$ or $y$, respectively. As noted in
+\cite{Prohaska:17a}, every additive metric is an R-metric. Conversely, an
+R-metric is additive if (and only if) all iterations are branching steps.
 
 \subsection*{Properties of R-metrics} 
 
@@ -96,60 +100,271 @@ proving that our construction the inequality above whenever.
 
 \subsection{From Recognition to Approximation} 
 
-In \cite{Prohaska:17a} we described an $O(|V|^6)$ algorithm to recognize 
-R-metrics.    
+In \cite{Prohaska:17a} we showed that R-metrics can be recognized using
+Alg.~\ref{alg:recogR} in $O(|V|^6)$ time. 
 
-
-
+We call the result $z$ of a merge event $(x,y:z)$ terminal this merging
+step was not followed by another merge or branch event involving $z$. A
+branch event $(x:z)$ is terminal if neither of its descendants was subject
+to a further merge or branch event. It is clear that every R-metric
+contains at least one merge or branch event. Alg.~\ref{alg:recogR}
+\cite{Prohaska:17a} recognizes R-metrics $O(|V|^6)$ time. In each
+interation it identifies a terminal merge or branch event and reduces the
+problem by eliminating one of the two descendants of a branch event or the
+mixed offspring of a merge event. It does not quite reconstruct the
+individual interations faithfully since in the case of terminal branch
+events $(x:z)$ no effort is made to precisely locate the common ancestor of
+$x$ and $z$. As we shall see below, this can be done with moderate effort.
+We also note that in the construction recipe a constant $\delta_u$ is added
+in each to iteration to the branch of every point $u$, in particular also
+those $u$ that are not involved in a merge or branch event. These
+individual steps cannot be resolved: only the total increase in distance
+between two merge or branch events can be resolved. Therefore, we set
+$\delta_u=0$ for all $u$ not involved in an event. 
 
 \begin{algorithm}[H]
-\caption{Old recognition algorithm for R matrices}
+\caption{Recognition of R-metrics}
+\label{alg:recogR}
 \SetAlgoLined
-\For{$\{x,y,z\} \in V$}{
-  \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
-   $a_{u,v} := 
-   \frac{(d'_{uz}+d'_{vy})-(d'_{vz}+d'_{uy})}{(d'_{ux}+d'_{vy})-(d'_{vx}+d'_{uy})}$\;
+
+\While{$|V|>3$}{
+  \For{$\{x,y,z\} \in V$}{
+    \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
+      $a_{u,v} := 
+      \frac{(d'_{uz}+d'_{vy})-(d'_{vz}+d'_{uy})}{(d'_{ux}+d'_{vy})-(d'_{vx}+d'_{uy})}$\;
+    }
+    \If{$\forall a_{u,v}: a_{u,v}=a$ \,\&\, $a\in [0,1]$}{
+      \If{$a \neq 0,1$}{
+        \tcc{merge $(x,t:z)$} 
+        $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
+        $d_{xy} = \frac{(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})-
+          2 \delta_z + a d'_{xz}+(1-a) d'_{yz}}{2a(1-a)}$\;
+        $\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
+        $\delta_y = d'_{yz} -   a   d_{xy} - \delta_z$\;
+        $\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
+        $d_{up} = d_{pu} -\delta_p$\;
+      }
+      \tcc{If $a=1$ then split $(x,z)$} 
+      \tcc{If $a=0$ then split $(y,x)$} 
+      $V\leftarrow V\setminus\{z\}$\;
+      \textbf{continue}\;
+    }  
   }
-  \If{$\forall a_{u,v}: a_{u,v}=a\in [0,1]$}{
-   \eIf{$a \neq 0,1$}{
-   $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
-   $d_{xy} = \frac{(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})-2 \delta_z + a d'_{xz}+(1-a) d'_{yz}}{2a(1-a)}$\;
-   $\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
-   $\delta_y = d'_{yz} - a \delta_z$\;
-  }{
-   \TODO{$a=0,a=1$ what happens then?}\;
-  }
-  \PFS{$\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
-  $d_{up} = d_{pu} -\delta_p$\;
-  \TODO{note that $\delta_u=0$ for $u\in V\setminus\{x,y,z\}$}}
-  delete row and column $z$ form $D$\;
-  }  
+  \tcc{ no split or merge found for $\{x,y,z\}$ } 
+  \Return \emph{\textbf{false}}
 }
+\Return \emph{\textbf{true}}
 \end{algorithm}
 
-We note that in each merge step we have $\delta_u=0$ for all $u\in
-V\setminus\{x,y,z\}$ 
+Our goal here is to modify Alg.~\ref{alg:recogR} into a consistent
+approximation algorithm. More precisely, we set out to construct an
+algorithm $\mathbb{A}$ with the following properties:
+\begin{itemize} 
+  \item For every finite metric $d$ on $|V|$ points, $\mathbb{A}(d)$ 
+    is an R-metric
+  \item If $d$ an R-metric, then $\mathbb{A}(d)=d$. 
+\end{itemize} 
+In practise the subdivide $\mathbb{A}$ into two steps: In the first stage,
+we extract a scenario $\mathcal{S}$ of merge and branch events from $d$. In
+the second stage, this scenario is converted into a distance
+matrix. Formally, a scenario $\mathcal{S}$ is a time-ordered list of merge
+and branch
+events together with the pertinent parameters: \\
+\begin{itemize} 
+  \item[] A branch event is characterized by $[(x:z),\delta_x,\delta_z]$.
+  \item[] A merge event is characterized by
+    $[(x,y:z),a,\delta_x,\delta_y,\delta_z]$.
+\end{itemize} 
+Since every metric on $|V|=3$ points is a additive and this described a
+tree, the first event of $\mathcal{S}$ can always be represented as a
+branch event. It is clear from the definition of R-metrics that every
+scenario $\mathcal{S}$ informs the recursions defining R-metrics and thus
+result in an R-metric. 
 
-
+The non-trivial part is the inference of a scenario $\mathcal{S}$ from an
+arbitrary metric $d$ on $V$. Given a metric distance matrix $d$, we say
+that a candidate event $(x,y:z)$ is \emph{perfect} if $a_{uv}$ as defined
+in Alg.~\ref{alg:recogR} is the same for all $u,v\in V\setminus\{x,y,z\}$
+and satisfied $a\in [0,1]$. If $a=1$ or $a=0$, we speak of perfect branch
+candidate $(x:z)$ or $(y:z)$, if $0<a<1$, we speak of a perfect merge
+candidate. The basic idea is now to iteratively identify candidates that
+are as close to perfect as possible and to reduce the matrix by the best
+branch or merge candidate. This overall logic is summarized in
+Alg.\ref{alg:toplevel}.
 
 \begin{algorithm}[H]
-\caption{Top level recursion}
+\caption{Consistent Approxmation of R-metrics}
+\label{alg:toplevel}
  \SetAlgoLined
- \While{$|V|\ge 4$}{ 
-   determine best tree-like step $(x,z)\to x$\;
-   determine best merge step $(x,z,y)\to(x,y)$\;
-   perform the better of tree-like or merge step\;
-   remove $z$ from $\mathbf{D}$ and $V$ 
+ \While{$|V|\ge 4$}{
+   determine best branch step $(x:z)$\;
+   determine best merge step $(x,y:z)$\;
+   perform the best of split $(x:z)$ or merge $(x,y:z)$ step\;
+   remove $z$ from and $V$\; 
  }
  compute initial tree for $|V|\le 3$ leaves\;
 \end{algorithm} 
-   
- 
+
+Clearly, if $d$ is an R-metric, then there is always a perfect terminal
+event that is recognized by Alg.\ref{alg:toplevel}, allowing a reduction of
+the matrix by undoing the terminal merge or branch event and removing the
+vertex $z$. Naturally, we obtain an approximation scheme that eventually
+returns scenario $\mathcal{S}$ be settling for the best candidate in each
+iteration step. As we shall see, some precautions have to be taken to
+ensure that the scenario stays valid in the non-perfect case.  In general
+it is not obvious what exactly the ``best candidate'' is supposed to
+be. Before we address this issue in detail we first describe the reduction
+steps given that a candidate event has been selected.
+
+First weconsider the special the branch steps. By equ.(9) of
+\cite{Prohaska:17a}, we have $a=0$ iff $d'_{uz}-d'_{vz} =
+d'_{uy}-d'_{vy}$ for all $y$ and $a=1$ iff $d'_{uz}-d'_{vz} =
+d'_{ux}-d'_{vx}$. These two cases are effectively the same, identifying $x$
+and $y$, respectively, as the ancestral branch from which $z$ is split
+off. For the branch event $(x:z)$ we obtain be setting $a=1$ that 
+$d'_{xz}=\delta_x+\delta_z$ and
+$d'_{ux}-d'_{uz}=\delta_x-\delta_z$, whence
+$d'_{xz}+d'_{ux}-d'_{uz}=2\delta_x$ and
+$d'_{xz}+d'_{uz}-d'_{ux}=2\delta_y$.  For numerical stability it seems
+advisable to first compute the average
+\begin{equation} 
+  C := \frac{1}{|V|-2} \sum_{u\in V\setminus\{x,y\}} (d'_{ux}-d'_{uz})
+\end{equation} 
+in order to obtain the consensus values $\delta_x = (d'_{xz}+C)/2$ and
+$\delta_z = (d'_{xz}-C)/2$.
 
 \begin{algorithm}[H]
-\caption{Approximation recognition algorithm for R matrices}
- \SetAlgoLined
- \For{$\{x,y,z\} \in V$}{
+\caption{Branch($x:z$)} 
+\label{alg:branchstep}
+\SetAlgoLined
+estimate consensus value for $C:=(d'_{ux}-d'_{uz})$ for $u\in
+V\setminus\{x,z\}$ \;
+$\delta_x = (d'_{xz}+C)/2$\;
+$\delta_z = (d'_{xz}-C)/2$\;
+$\forall u\in V\setminus\{x,z\}$: $d_{ux} =  d_{ux}-\delta_x$\;
+\end{algorithm} 
+
+For a merge step $(x,y:z)$ we essentially follow the reduction outline in
+Alg.~\ref{alg:recogR}. As in the case of $\delta_x$ and $\delta_z$ in
+Alg.~\ref{alg:branchstep} there a terms that can be obtained using
+arbitrary choices of $u\in V\setminus\{x,y,z\}$. In particular that
+pertains to the mixing parameter $a$, the value of $Q$, and the derived
+quantity $d_{xy}$. For non-perfect candidates, it is desirable to estimate
+robust average or consensus values instead of picking a particular value.
+In Alg.~\ref{alg:mergestep} we us a simplistic scheme in which we assume
+that a consensus value $\hat a$ for the mixture parameter to be supplied
+already with the best candidate $(x,y:z)$. Given $\hat a$, it is most
+natural to estimate $Q$ as an arithmetic mean. All other parameters are
+then uniquely determined.
+
+\begin{algorithm}[H]
+\caption{Merge($x,y:z$)} 
+\label{alg:mergestep} 
+\SetAlgoLined
+use $a$ estimated for $(x,y:z)$\;
+$\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
+estimate consensus value for $Q:=(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})$ for the 
+set $u\in V\setminus\{x,y,z\}$\;
+$d_{xy} = (Q-2 \delta_z + a d'_{xz}+(1-a) d'_{yz})/(2a(1-a))$\;
+$\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
+$\delta_y = d'_{yz} -   a   d_{xy} - \delta_z$\;
+$\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
+$d_{up} = d_{pu} -\delta_p$\;
+\end{algorithm} 
+
+Let us now turn to the problem of finding best candidates. This is fairly
+straightforward for the branch candidates. Algorithm~\ref{alg:branchstep}
+below ensures that a perfect branch step, i.e., one with $\epsilon_{xz}=0$,
+receives highest priority. For the merging procedure we require that $q_a$
+takes the best value if $a=(h_z-h_y)/(h_x-h_y)$ is the same for all $u,v\in
+V\setminus\{x,y,z\}$.
+
+\begin{algorithm}[H]
+\caption{Find best branch candidate $(x:z)$ } 
+\label{alg:branchstep}
+\SetAlgoLined
+\For{$\{x,z\} \subseteq V$}{
+  \For{$\{u,v\}\in V\setminus\{x,z\}$}{ 
+    $\epsilon_{xz} += \Vert (d_{vz}-d_{uz})- (d_{vx}-d_{ux}) \Vert$\;
+  }   
+}
+\Return ranked list $[(x:z,\epsilon_{xz})| x,z\in V]$ by increasing 
+$\epsilon_{xz}$\;
+\end{algorithm} 
+
+For merge candidates, the problem is bit more involved.  A short
+computation shows that $a\in(0,1)$ if and only if $h_z$ lies between $h_x$
+and $h_y$. Correspondingly, we have $a<0$ for $h_z>h_y>h_x$ or
+$h_z<h_y<h_x$ and $a>1$ for $h_z>h_x>h_y$ or $h_z<h_x<h_y$.  This suggests
+a step-wise evaluation:
+\begin{itemize} 
+\item[(i)] determine for the $\{u,v\}\in V\setminus\{x,y,z\}$ to which of
+  three categories the triple $(h_x,h_y,h_z)$ belongs. If it is one of the
+  latter two cases, reject the merge step and $(x,y:z)$ treat as one of of
+  the branch steps $(x:z)$ or $(y:z)$.
+\item[(ii)] If $a\in(0,1)$ we can estimate the mean ratio $a$ as the ration
+  of the means of $h_z-h_y$ and $h_x-h_y$. This can in fact be done
+  separately for the triples with $h_x>h_y$ and $h_y>h_x$ and use a
+  weighted sum as the final result. Again, the merge step is rejected if
+  the sum falls outside the interval $(0,1)$. 
+\item[(iii)] For those merge candidates with $a\in(0,1)$, the standard
+  deviation of $\alpha$ is used as the quality value $q$.
+\end{itemize}
+In the case of a perfect merge step, we have always have $h_z$ between
+$h_x$ and $h_y$ and we obtain the same estimate for $a$, hence the standard
+deviation is $0$, guaranteeing that the perfect merge candidates appear as
+top candidates in the list of potential merges. 
+
+\begin{algorithm}[H]
+\caption{Find best merging candidate $(x,y:z)$ } 
+\label{alg:mergestep}
+
+\For{$\{x,y,z\} \in V$}{
+  $\forall \{u,v\} \in V\setminus\{x,y,z\}$ compute triples\\
+  $h_x = d'_{ux}-d'_{vx}$, 
+  $h_y = d'_{ux}-d'_{vx}$,
+  $h_z = d'_{ux}-d'_{vx}$ \;
+  compute best estimate for $\hat a$ and a quality measure $q_a$ 
+  from $[h_x,h_y,h_z]$ \;
+  \If{$\hat a<0$}{ $\hat a=0$, adjust $q_a$\;} 
+  \If{$\hat a>1$}{ $\hat a=1$, adjust $q_a$\;}
+}
+\Return ranked list $[(x,y:z,a,q_a)| x,y,z\in V]$ by quality\;
+\end{algorithm} 
+
+It remains to determine a rational scheme for comparting merge and branch
+steps.
+
+\TODO{construction ahead} 
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+ \begin{algorithm}[H]
+\caption{Approximation of an R-metric} 
+\SetAlgoLined
+\For{$\{x,y,z\} \in V$}{
   \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
    $a_{u,v} := \frac{(d'_{uz}+d'_{vy})-(d'_{vz}+d'_{uy})}{(d'_{ux}+d'_{vy})-(d'_{vx}+d'_{uy})}$\;
   }
@@ -196,27 +411,6 @@ V\setminus\{x,y,z\}$
 
 \subsection*{Special Cases} 
 
-Recognizing the special cases $a =0$ and $a =1$, respectively.
-
-Equ.(9) of \cite{Prohaska:17a} implies that $a=0$ iff 
-$d'_{uz}-d'_{vz} = d'_{uy}-d'_{vy}$ for all $y$ and $a=1$ iff 
-$d'_{uz}-d'_{vz} = d'_{ux}-d'_{vx}$.
-
-It makes sense therefore, to capture these cases upfront. In fact the two
-cases are effectively the same, identifying $x$ and $y$, respectively, as
-the sole ancestral branches, corresponds to a tree-like speciation. 
-
-In this case we know that $d'_{xz}=\delta_x+\delta_z$ and 
-$d'_{ux}-d'_{uz}=\delta_x-\delta_z$, whence 
-$d'_{xz}+d'_{ux}-d'_{uz}=2\delta_x$
-and 
-$d'_{xz}+d'_{uz}-d'_{ux}=2\delta_y$. 
-For numerical stability it is advisable to first compute 
-\begin{equation} 
-  C := \frac{1}{|V|-2} \sum_{u\in V\setminus\{x,y\}} (d'_{ux}-d'_{uz})
-\end{equation} 
-and then choose the consensus value $2\delta_x = d'_{xz}+C$ and 
-$2\delta_x = d'_{xz}-C$.
 
 
 
