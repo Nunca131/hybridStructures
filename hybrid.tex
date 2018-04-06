@@ -172,7 +172,7 @@ $\delta_u=0$ for all $u$ not involved in an event.
     }
     \If{$\forall a_{u,v}: a_{u,v}=a$ \,\&\, $a\in [0,1]$}{
       \If{$a \neq 0,1$}{
-        \tcc{merge $(x,t:z)$} 
+        \tcc{merge \NR{$(x,y:z)$}} 
         $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
         $d_{xy} = \frac{(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})-
           2 \delta_z + a d'_{xz}+(1-a) d'_{yz}}{2a(1-a)}$\;
@@ -181,8 +181,9 @@ $\delta_u=0$ for all $u$ not involved in an event.
         $\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
         $d_{up} = d_{pu} -\delta_p$\;
       }
-      \tcc{If $a=1$ then split $(x,z)$} 
-      \tcc{If $a=0$ then split $(y,x)$} 
+      \tcc{If $a=1$ then split \NR{$(x:z)$}} 
+      \tcc{If $a=0$ then split \NR{$(y:z)$}}
+      \TODO{why are the things above in a comment?}
       $V\leftarrow V\setminus\{z\}$\;
       \textbf{continue}\;
     }  
@@ -199,7 +200,7 @@ algorithm $\mathbb{A}$ with the following properties:
 \begin{itemize} 
   \item For every finite metric $d$ on $|V|$ points, $\mathbb{A}(d)$ 
     is an R-metric
-  \item If $d$ an R-metric, then $\mathbb{A}(d)=d$. 
+  \item If $d$ \NR{is a} R-metric, then $\mathbb{A}(d)=d$. 
 \end{itemize} 
 In practise the subdivide $\mathbb{A}$ into two steps: In the first stage,
 we extract a scenario $\mathcal{S}$ of merge and branch events from $d$. In
@@ -230,7 +231,7 @@ Alg.\ref{alg:toplevel}.
  compute initial tree for $|V|\le 3$ leaves\;
 \end{algorithm} 
 
-Clearly, if $d$ is an R-metric, then there is always a perfect terminal
+Clearly, if $d$ is a R-metric, then there is always a perfect terminal
 event that is recognized by Alg.\ref{alg:toplevel}, allowing a reduction of
 the matrix by undoing the terminal merge or branch event and removing the
 vertex $z$. Naturally, we obtain an approximation scheme that eventually
@@ -241,7 +242,7 @@ it is not obvious what exactly the ``best candidate'' is supposed to
 be. Before we address this issue in detail we first describe the reduction
 steps given that a candidate event has been selected.
 
-First weconsider the special the branch steps. By equ.(9) of
+First weconsider the special the branch steps. By Equ.(9) of
 \cite{Prohaska:17a}, we have $a=0$ iff $d'_{uz}-d'_{vz} =
 d'_{uy}-d'_{vy}$ for all $y$ and $a=1$ iff $d'_{uz}-d'_{vz} =
 d'_{ux}-d'_{vx}$. These two cases are effectively the same, identifying $x$
