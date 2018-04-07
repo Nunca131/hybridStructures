@@ -172,7 +172,7 @@ $\delta_u=0$ for all $u$ not involved in an event.
     }
     \If{$\forall a_{u,v}: a_{u,v}=a$ \,\&\, $a\in [0,1]$}{
       \If{$a \neq 0,1$}{
-        \tcc{merge \NR{$(x,y:z)$}} 
+        \tcc{merge $(x,y:z)$} 
         $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
         $d_{xy} = \frac{(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})-
           2 \delta_z + a d'_{xz}+(1-a) d'_{yz}}{2a(1-a)}$\;
@@ -181,9 +181,10 @@ $\delta_u=0$ for all $u$ not involved in an event.
         $\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
         $d_{up} = d_{pu} -\delta_p$\;
       }
-      \tcc{If $a=1$ then split \NR{$(x:z)$}} 
-      \tcc{If $a=0$ then split \NR{$(y:z)$}}
-      \TODO{why are the things above in a comment?}
+      \tcc{If $a=1$ then split $(x:z)$} 
+      \tcc{If $a=0$ then split $(y:z)$}
+%      \TODO{why are the things above in a comment?} Because for
+%      recognition only we don't do anything except dropping $z$
       $V\leftarrow V\setminus\{z\}$\;
       \textbf{continue}\;
     }  
@@ -200,7 +201,7 @@ algorithm $\mathbb{A}$ with the following properties:
 \begin{itemize} 
   \item For every finite metric $d$ on $|V|$ points, $\mathbb{A}(d)$ 
     is an R-metric
-  \item If $d$ \NR{is a} R-metric, then $\mathbb{A}(d)=d$. 
+  \item If $d$ is a R-metric, then $\mathbb{A}(d)=d$.
 \end{itemize} 
 In practise the subdivide $\mathbb{A}$ into two steps: In the first stage,
 we extract a scenario $\mathcal{S}$ of merge and branch events from $d$. In
@@ -296,7 +297,19 @@ $\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
 $\delta_y = d'_{yz} -   a   d_{xy} - \delta_z$\;
 $\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
 $d_{up} = d_{pu} -\delta_p$\;
+repair metric if necessary\;
 \end{algorithm} 
+
+The incremental modifications in Alg.~\ref{alg:branchstep} and
+\ref{alg:mergestep} are not guaranteed to preserve metrics. Furthermore,
+several other inequalities must hold and may need be enforced. First,
+$\delta_x,\delta_y,\delta_z\ge 0$, $d_{xy}\ge 0$, and $d_{ux},d_{uy}\ge
+0$. In order to enforce the triangle inequality after the editing step, one
+could use one of several \emph{triangle fixing} algorithms that have been
+designed to find the metric closest to a given dissimilarity measure, see
+e.g.\ \cite{Sra:05,Brickel:08}. Recently, algorithms have appeared that
+restrict themselves to fixing only triangles that violate the triangle
+inequality \cite{Gilbert:17}.
 
 Let us now turn to the problem of finding best candidates. This is fairly
 straightforward for the branch candidates. Algorithm~\ref{alg:branchstep}
@@ -363,31 +376,35 @@ steps.
 
 \TODO{construction ahead} 
 
+\section{Stuff the needs to be done} 
+
+\begin{enumerate}
+ \item \TODO{check whether all brackets are correctly set} \\
+ \item \TODO{check whether $d_{xy}$ 
+  conforms to the triangle inequality $d_{xy} \leq d_{ux} + d_{uy}$?} \\
+ \item \TODO{Wenn Baum, haben wir das richtige Ergebnis? (sanity check) Was passiert bei Cherries?} \\
+ \item \TODO{NR: Test on simulated noisy data} \\
+ \item \TODO{put somewhere: $\forall d,\delta: d,\delta\geq 0$, otherwise: $d,\delta = 0$}
+\end{enumerate}
+
+
+\bibliographystyle{abbrv}      
+\bibliography{hybrid}   
+
+\end{document}
 
 
 
 
 
 
- 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+LEYCHENTHEYLE 
 
-
-
-
-
-
-
-
-
-
-
-
-
-   
- \begin{algorithm}[H]
+\begin{algorithm}[H]
 \caption{Approximation of an R-metric} 
 \SetAlgoLined
 \For{$\{x,y,z\} \in V$}{
@@ -421,45 +438,3 @@ steps.
   }
   }
 \end{algorithm}
-
-\begin{enumerate}
- \item \TODO{check whether all brackets are correctly set} \\
- \item \TODO{check whether $d_{xy}$ 
-  conforms to the triangle inequality $d_{xy} \leq d_{ux} + d_{uy}$?} \\
- \item \TODO{Wenn Baum, haben wir das richtige Ergebnis? (sanity check) Was passiert bei Cherries?} \\
- \item \TODO{NR: Test on simulated noisy data} \\
- \item \TODO{put somewhere: $\forall d,\delta: d,\delta\geq 0$, otherwise: $d,\delta = 0$}
-\end{enumerate}
-
-
-
-
-
-\subsection*{Special Cases} 
-
-
-
-
-\begin{algorithm}[H]
-\caption{\NR{Cherry picking}}
-\label{alg:cherries}
- \SetAlgoLined
- \For{$\{x,z\} \subseteq V$}{
-   \For{$\{u,v\}\in V\setminus\{x,z\}$}{ 
-     $\epsilon_{xz} += \Vert (d_{vz}-d_{uz})- (d_{vx}-d_{ux}) \Vert$\;
-   }   
- }
- Determine minimum of $\epsilon_{xz}$;
- \If{$\epsilon_{xz}<\varepsilon$}{
-   compute $C$, $\delta_x$, $\delta_z$ as above\;
-   record ``divergence of $(x,z)$ with $\delta_z$ and $\delta_z$''\;
- \For{$u\in V\setminus\{x\}$}{
-   $d_{ux} =  d_{ux}-\delta_x$\;} 
- }
-\end{algorithm}
-
-
-\bibliographystyle{abbrv}      
-\bibliography{hybrid}   
-
-\end{document}
