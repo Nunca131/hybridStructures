@@ -14,7 +14,7 @@
 
 \begin{document}
 
-\title{\TODO{some fancy title}}
+\title{Phylogenetics with Mixing Hybrids}
 
 \maketitle
 
@@ -24,6 +24,11 @@
 \end{abstract}
 
 \section{Introduction}
+
+Classical phylogenetics assumes an underlying branching process that
+occasionally generates novel species. 
+
+
 
 \begin{itemize}
 \item evolution of gene clusters as in~\cite{Prohaska:17a}
@@ -108,6 +113,13 @@ result in an R-metric.
   since it would imply that the reconstruction of the R-metric is unique in
   a useful sense.} 
 
+The definition of an R-matrix makes an important, and in practise
+restrictive, assumption: For every merge event $(x,y:z)$ we assume that
+there are surviving descendants of $x$, $y$, and $z$ that are not products
+of a merge.
+
+\TODO{As an open question for the future, we thus ask how an arbitrary 
+submatrix of an R-metric can be recognized.} 
 
 \subsection*{Properties of R-metrics} 
 
@@ -135,10 +147,12 @@ examples it will be worth while to show that analytically, presumably by
 proving that our construction the inequality above whenever.
 }
 
-\subsection{From Recognition to Approximation} 
+\section{From Recognition to Approximation} 
+
+\subsection{Recognition of R-metrics}
 
 In \cite{Prohaska:17a} we showed that R-metrics can be recognized using
-Alg.~\ref{alg:recogR} in $O(|V|^6)$ time. 
+Alg.~\ref{alg:recogR} in $O(|V|^6)$ time.
 
 We call the result $z$ of a merge event $(x,y:z)$ terminal this merging
 step was not followed by another merge or branch event involving $z$. A
@@ -195,6 +209,8 @@ $\delta_u=0$ for all $u$ not involved in an event.
 \Return \emph{\textbf{true}}
 \end{algorithm}
 
+\subsection{Extraction of Branch and Merge Scenarios} 
+
 Our goal here is to modify Alg.~\ref{alg:recogR} into a consistent
 approximation algorithm. More precisely, we set out to construct an
 algorithm $\mathbb{A}$ with the following properties:
@@ -205,8 +221,8 @@ algorithm $\mathbb{A}$ with the following properties:
 \end{itemize} 
 In practise the subdivide $\mathbb{A}$ into two steps: In the first stage,
 we extract a scenario $\mathcal{S}$ of merge and branch events from $d$. In
-the second stage, this scenario is converted into a distance
-matrix. 
+the second stage, this scenario is converted back into a metric distance
+$d(\mathcal{S})$.
 
 The non-trivial part is the inference of a scenario $\mathcal{S}$ from an
 arbitrary metric $d$ on $V$. Given a metric distance matrix $d$, we say
@@ -222,14 +238,15 @@ Alg.\ref{alg:toplevel}.
 \begin{algorithm}[H]
 \caption{Consistent Approxmation of R-metrics}
 \label{alg:toplevel}
- \SetAlgoLined
- \While{$|V|\ge 4$}{
-   determine best branch step $(x:z)$\;
-   determine best merge step $(x,y:z)$\;
-   perform the best of split $(x:z)$ or merge $(x,y:z)$ step\;
-   remove $z$ from and $V$\; 
- }
- compute initial tree for $|V|\le 3$ leaves\;
+\SetAlgoLined
+\While{$|V|\ge 4$}{
+  determine best branch step $(x:z)$\;
+  determine best merge step $(x,y:z)$\;
+  perform the best of split $(x:z)$ or merge $(x,y:z)$ step\;
+  remove $z$ from and $V$\; 
+}
+compute initial branch scenario for $|V|\le 3$ leaves\;
+\Return $\mathcal{S}$ 
 \end{algorithm} 
 
 Clearly, if $d$ is a R-metric, then there is always a perfect terminal
@@ -238,27 +255,29 @@ the matrix by undoing the terminal merge or branch event and removing the
 vertex $z$. Naturally, we obtain an approximation scheme that eventually
 returns scenario $\mathcal{S}$ be settling for the best candidate in each
 iteration step. As we shall see, some precautions have to be taken to
-ensure that the scenario stays valid in the non-perfect case.  In general
-it is not obvious what exactly the ``best candidate'' is supposed to
-be. Before we address this issue in detail we first describe the reduction
-steps given that a candidate event has been selected.
+ensure that the scenario stays valid in the non-perfect case. More
+importantly, it is not obvious what exactly the ``best candidate'' is
+supposed to be. Before we address this issue in detail, we first describe
+the reduction steps given that a candidate event has been selected in a
+given iteration.
 
-First weconsider the special the branch steps. By Equ.(9) of
-\cite{Prohaska:17a}, we have $a=0$ iff $d'_{uz}-d'_{vz} =
-d'_{uy}-d'_{vy}$ for all $y$ and $a=1$ iff $d'_{uz}-d'_{vz} =
-d'_{ux}-d'_{vx}$. These two cases are effectively the same, identifying $x$
-and $y$, respectively, as the ancestral branch from which $z$ is split
-off. For the branch event $(x:z)$ we obtain be setting $a=1$ that 
-$d'_{xz}=\delta_x+\delta_z$ and
+First we consider the special case of a branch steps. By Equ.(9) of
+\cite{Prohaska:17a}, we have $a=0$ iff $d'_{uz}-d'_{vz} = d'_{uy}-d'_{vy}$
+for all $y$ and $a=1$ iff $d'_{uz}-d'_{vz} = d'_{ux}-d'_{vx}$. These two
+cases are effectively the same, identifying $x$ and $y$, respectively, as
+the ancestral branch from which $z$ is split off. For the branch event
+$(x:z)$ we obtain, by setting $a=1$, that $d'_{xz}=\delta_x+\delta_z$ and
 $d'_{ux}-d'_{uz}=\delta_x-\delta_z$, whence
 $d'_{xz}+d'_{ux}-d'_{uz}=2\delta_x$ and
-$d'_{xz}+d'_{uz}-d'_{ux}=2\delta_y$.  For numerical stability it seems
+$d'_{xz}+d'_{uz}-d'_{ux}=2\delta_y$. For numerical stability it seems
 advisable to first compute the average
 \begin{equation} 
   C := \frac{1}{|V|-2} \sum_{u\in V\setminus\{x,y\}} (d'_{ux}-d'_{uz})
 \end{equation} 
 in order to obtain the consensus values $\delta_x = (d'_{xz}+C)/2$ and
-$\delta_z = (d'_{xz}-C)/2$.
+$\delta_z = (d'_{xz}-C)/2$.  We note, finally, there is no difference
+whether $z$ as branching off from $x$ or \textit{vice versa}, hence it
+suffices to consider only the $x$ small than $z$ in input order. 
 
 \begin{algorithm}[H]
 \caption{Branch($x:z$)} 
@@ -309,14 +328,28 @@ could use one of several \emph{triangle fixing} algorithms that have been
 designed to find the metric closest to a given dissimilarity measure, see
 e.g.\ \cite{Sra:05,Brickel:08}. Recently, algorithms have appeared that
 restrict themselves to fixing only triangles that violate the triangle
-inequality \cite{Gilbert:17}.
+inequality \cite{Gilbert:17}. For our purposes, Algorithm 2 of
+\cite{Gilbert:17} seems particularly appropriate.
 
-Let us now turn to the problem of finding best candidates. This is fairly
-straightforward for the branch candidates. Algorithm~\ref{alg:branchstep}
-below ensures that a perfect branch step, i.e., one with $\epsilon_{xz}=0$,
-receives highest priority. For the merging procedure we require that $q_a$
-takes the best value if $a=(h_z-h_y)/(h_x-h_y)$ is the same for all $u,v\in
-V\setminus\{x,y,z\}$.
+\subsection{Ranking of Branch and Merge Scenarios}
+
+Let us now turn to the problem of finding best candidates. First suppose
+there are perfect branch or merge candidates. In this case it seems
+advisable to follow the logic of clustering algorithms and to consider the 
+ones with smallest distances first. This choice does not influence the
+correctness of the recognition algorithm but should contribute to numerical
+stability.
+
+If there is no perfect candidate, however, our choice will affect the final
+result. Ideally, we would like to select a sequence of candidates that
+minimizes the overall difference between the input and the output metric.
+This seems to be difficult at the very least since in practise we have to
+make a choice in each iteration step. Therefore we resort to heuristics
+that at least guarantee that perfect candidates are recognized as such.
+
+For the branch candidates, Algorithm~\ref{alg:branchstep} is a rather
+straightforward choice. It obviously ensures that a perfect branch step,
+i.e., one with $\epsilon_{xz}=0$, receives highest priority.
 
 \begin{algorithm}[H]
 \caption{Find best branch candidate $(x:z)$ } 
@@ -331,11 +364,17 @@ V\setminus\{x,y,z\}$.
 $\epsilon_{xz}$\;
 \end{algorithm} 
 
-For merge candidates, the problem is bit more involved.  A short
-computation shows that $a\in(0,1)$ if and only if $h_z$ lies between $h_x$
-and $h_y$. Correspondingly, we have $a<0$ for $h_z>h_y>h_x$ or
-$h_z<h_y<h_x$ and $a>1$ for $h_z>h_x>h_y$ or $h_z<h_x<h_y$.  This suggests
-a step-wise evaluation:
+For merge candidates, the problem is bit more involved. The quality $q_a$
+of the merge candidate $(x,y:z)$ is determined by how tightly
+$a=(h_z-h_y)/(h_x-h_y)$ is centered at a single value $\hat a\in (0,1)$ for
+all $u,v\in V\setminus\{x,y,z\}$. Since there is nothing to prevent the
+denominator $h_x-h_y$ from becoming $0$, estimating $\hat a$ is also a not
+entirely trivial problem.
+
+A short computation shows that $a\in(0,1)$ if and only if $h_z$ lies
+between $h_x$ and $h_y$. Correspondingly, we have $a<0$ for $h_z>h_y>h_x$
+or $h_z<h_y<h_x$ and $a>1$ for $h_z>h_x>h_y$ or $h_z<h_x<h_y$.  This
+suggests a step-wise evaluation:
 \begin{itemize} 
 \item[(i)] determine for the $\{u,v\}\in V\setminus\{x,y,z\}$ to which of
   three categories the triple $(h_x,h_y,h_z)$ belongs. If it is one of the
@@ -352,7 +391,7 @@ a step-wise evaluation:
 In the case of a perfect merge step, we have always have $h_z$ between
 $h_x$ and $h_y$ and we obtain the same estimate for $a$, hence the standard
 deviation is $0$, guaranteeing that the perfect merge candidates appear as
-top candidates in the list of potential merges. 
+top candidates in the list of potential merges.
 
 \begin{algorithm}[H]
 \caption{Find best merging candidate $(x,y:z)$ } 
@@ -379,12 +418,15 @@ steps.
 \section{Stuff the needs to be done} 
 
 \begin{enumerate}
- \item \TODO{check whether all brackets are correctly set} \\
- \item \TODO{check whether $d_{xy}$ 
-  conforms to the triangle inequality $d_{xy} \leq d_{ux} + d_{uy}$?} \\
- \item \TODO{Wenn Baum, haben wir das richtige Ergebnis? (sanity check) Was passiert bei Cherries?} \\
+ \item \TODO{check whether all brackets are correctly set} 
+ \item \TODO{check whether $d_{xy}$ conforms to the triangle inequality
+     $d_{xy} \leq d_{ux} + d_{uy}$?}  \PFS{theoretically taken care of, see
+     triangle correction problem mentioned above}
+ \item \TODO{Wenn Baum, haben wir das richtige Ergebnis? (sanity check) 
+     Was passiert bei Cherries?} 
+   \PFS{theoretically yes: if tree, we find only branch events -- this is 
+     already argued in \cite{Prohaska:17a}}
  \item \TODO{NR: Test on simulated noisy data} \\
- \item \TODO{put somewhere: $\forall d,\delta: d,\delta\geq 0$, otherwise: $d,\delta = 0$}
 \end{enumerate}
 
 
