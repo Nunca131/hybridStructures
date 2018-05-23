@@ -5,6 +5,10 @@
 %\usepackage{algorithmic}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{graphicx}
+\newtheorem{theorem}{Theorem}
+\newtheorem{cxampl}[theorem]{Counterexample}
+
 
 \newcommand{\TODO}[1]{\begingroup\color{red}#1\endgroup}
 \newcommand{\NR}[1]{\begingroup\color{orange}#1\endgroup}
@@ -72,8 +76,8 @@ Then all points diverge with arbitrary rates, i.e.,
 We say that a metric distance $d$ is an R-metric if it can be constructed
 in this manner. An iteration with $a\in(0,1)$ will be referred to as
 \emph{merge step}, since the product $z$ is a mixture of the parents $x$
-and $y$. If $a=1$ or $a=0$ we speak of a \emph{branch step} since $z$
-originates as a copy or $x$ or $y$, respectively. As noted in
+and $y$. If $a=1$ or $a=0$ we speak of a \emph{branch step} since
+$z$ originates as a copy or $x$ or $y$, respectively. As noted in
 \cite{Prohaska:17a}, every additive metric is an R-metric. Conversely, an
 R-metric is additive if (and only if) all iterations are branching steps.
 
@@ -122,6 +126,51 @@ of a merge.
 submatrix of an R-metric can be recognized.} 
 
 \subsection*{Properties of R-metrics} 
+
+It is easy to see that every additive metric is an R-metric
+\cite{Prohaska:17a}. Hence every metric in $n=3$ points is an R-metric.
+This is no longer true for $n=4$:
+\begin{cxampl}
+Consider the box metric defined by the
+the quandrangle graph with edge length $a,b>0$. There are two distinct ways
+of who $z$ can potentially be produced by a merge of $x$ and $y$:
+\begin{equation}
+  \begin{minipage}[c]{0.7\textwidth}
+    \includegraphics[width=\textwidth]{box1.eps}
+  \end{minipage}
+\end{equation}
+In each case, consider the four induced paths $pqr$ on three of the four
+vertices. For each of them the triangle inequality becomes degenerate,
+i.e., $d_{pq}+d_{qr}-d_{pr}=a+b-(a+b)=0$. In the first case, for instance,
+substituting the recursion equation becomes
+\begin{equation*}
+  \begin{split}
+    0&=d'_{xy}+d'_{yz}-d'_{xz}
+    = d_{xy}+\delta_x+\delta_y + \ d_{xy}+\delta_z+\delta_y -
+    (1-a) d_{xy} - \delta_x - \delta_y \\
+    &= 2a d_{xy} + 2\delta_z \\
+  \end{split}
+\end{equation*}
+Since both $d_{xy}\ge 0$ and $\delta_z\ge 0$, we infer
+$\delta_z=0$. Analogously (in some cases invoking the triangle inequality
+instead of non-negativity of the distances among $\{u,x,y\}$) one finds
+$\delta_u=\delta_x=\delta_y=\delta_z=0$ in both scenarios. 
+In the first case, $r+s=d_{zx} = (1-a) d_{xy} = (1-a) b$ yields
+$r\le 0$, a contradiction. In the second case
+$r+s= d_{zu} = a d_{xu} + (1-a)  d_{yu} =
+a r + (1-a) s$ yields $r=s=0$, again a contradiction. Hence the
+``rectangle metric'' cannot be represented as R-metric.
+\hfill$\qquad\triangleleft$
+\end{cxampl}
+
+
+Conversely, it is not hard to construct examples of R-metrics that are not
+split-decomposable.
+
+
+
+
+
 
 
 \TODO{It does not seem to be very easy to check whether R-metric are 
