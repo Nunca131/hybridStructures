@@ -5,15 +5,15 @@
 %\usepackage{algorithmic}
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{amsthm}
 \usepackage{graphicx}
 \newtheorem{theorem}{Theorem}
 \newtheorem{cxampl}[theorem]{Counterexample}
-
+\newtheorem{lemma}[theorem]{Lemma}
 
 \newcommand{\TODO}[1]{\begingroup\color{red}#1\endgroup}
 \newcommand{\NR}[1]{\begingroup\color{orange}#1\endgroup}
 \newcommand{\PFS}[1]{\begingroup\color{green}#1\endgroup}
-
 
 
 \begin{document}
@@ -54,6 +54,8 @@ occasionally generates novel species.
 
 \section{R-Metrics} 
 
+\subsection{Definition} 
+
 In~\cite{Prohaska:17a} we introduced R-metrics by means of a simple
 iterative scheme starting from a pair of points $\{x,y\}$ with a given
 distance $d_{xy}$.  First, an additional point $z$ is inserted as a
@@ -62,9 +64,9 @@ that the distance of $d_{zu}$ correspondinly is a mixture of $d_{xu}$ and
 $d_{yu}$. More precisely, we assume that
 \begin{equation} 
 \begin{split} 
-  d_{zx} & = (1-a)  d_{xy} \\
-  d_{zy} & =   a    d_{xy} \\
-  d_{zu} & =   a    d_{xu} + (1-a)  d_{yu} \quad\textrm{for all}\ 
+  d_{zx} & = (1-\alpha)  d_{xy} \\
+  d_{zy} & =   \alpha    d_{xy} \\
+  d_{zu} & =   \alpha    d_{xu} + (1-\alpha)  d_{yu} \quad\textrm{for all}\ 
                      u\in V\setminus\{ x,y \}
 \end{split}
 \end{equation} 
@@ -78,8 +80,133 @@ in this manner. An iteration with $a\in(0,1)$ will be referred to as
 \emph{merge step}, since the product $z$ is a mixture of the parents $x$
 and $y$. If $a=1$ or $a=0$ we speak of a \emph{branch step} since
 $z$ originates as a copy or $x$ or $y$, respectively. As noted in
-\cite{Prohaska:17a}, every additive metric is an R-metric. Conversely, an
+\cite{Prohaska:17a}, every additive metric is an R-metric.
+
+\subsection{R-metrics on 4 Points}
+
+Every metric on three points $X=\{x,y,u\}$ is additive and can be written as
+\begin{equation}
+  d_{xy}=a+b \qquad
+  d_{xu}=a+c \qquad
+  d_{yu}=b+c\,. 
+\end{equation}
+By construction, every R-metric on four points thus arises by a single
+split or hybridization step from a metric on three points. W.l.o.g.\ we
+assume that $x$ and $y$ act as parents and obtain on $\{x,y,z,u\}$:
+\begin{equation} 
+  \begin{split}
+  d_{xy}' & = a + b + \delta_x + \delta_y \\  
+  d_{xz}' & = (1-\alpha)(a+b) + \delta_z +\delta_x \\
+  d_{xu}' & = a + c + \delta_x + \delta_u \\
+  d_{yz}' & = \alpha (a+b) + \delta_y + \delta_z \\
+  d_{yu}' & = b + c + \delta_y + \delta_u \\
+  d_{zu}' & = \alpha (a+c) + (1-\alpha)(b+c) + \delta_z + \delta_u
+\end{split}
+\end{equation}
+On the other hand, every metric on 4 points is totally split decomposable
+and has a unique represention as a ``box with spikes'' as shown in
+Fig.~\ref{fig:4box}.
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.75\textwidth]{n4.eps}
+  \end{center}
+  \caption{General form an R-metric on $\{x,y,z,u\}$ where $z$ arises by
+    merging the parents $x$ and $y$.}
+  \label{fig:4box}
+\end{figure}
+
+The isolation indices for the non-trivial splits are
+obtained from the three distance sums
+\begin{equation*}
+  \begin{split}
+    d_{xy}'+d_{zu}' & =  a + b + (1-\alpha)a + \alpha b + \xi \\
+    d_{xz}'+d_{yu}' & = \alpha (a+b) + b + \xi \\
+    d_{xu}'+d_{yz}' & = (1-\alpha)(a+b) + a + \xi \\
+  \end{split}
+\end{equation*}
+where $\xi=\delta_x+\delta_y+\delta_z+\delta_u$. A short computation shows
+\begin{equation*}
+  \begin{split}
+    (d_{xy}'+d_{zu}')-(d_{xz}'+d_{yu}') &= 2(1-\alpha)a \ge 0 \\
+    (d_{xy}'+d_{zu}')-(d_{xu}'+d_{yz}') &= 2\alpha b \ge 0 \,,\\
+  \end{split}
+\end{equation*}
+whence the non-trivial isolation indices are $\beta_{xz|yu}=(1-\alpha)a$
+and $\beta_{yz|xu}=\alpha b$. The four trivial isolation indices are
+\begin{equation*}
+  \beta_{z|xyu} = \delta_z \qquad
+  \beta_{u|xyz} = c + \delta_u \qquad
+  \beta_{x|yzu} = \alpha a + \delta_x \qquad
+  \beta_{y|xzu} = (1-\alpha) b + \delta_y 
+\end{equation*}
+We note, furthermore, that for $a,b>0$, both isolation indices are strictly
+positive if and only if $0<\alpha<1$. For $\alpha=0$ we obtain the tree of
+the form $(xz)(yu)$ and for $\alpha=1$ we the tree $(yz)(xu)$. In the
+degenerate case in which either $a=0$ or $b=0$ the metric also reduces to a
+tree. 
+
+We are now in the position to characterize R-metrics in terms of its spiked
+box diagram:
+\begin{theorem}
+  A metric on four points with non-trivial isolation isolation indices
+  $r$ and $s$ is an R-metric if an only if there is pair of antipodal
+  trivial splits with isolation indices $p$ and $q$ such that
+  $p q \ge r s$. 
+\end{theorem}
+\begin{proof}
+  Consider the diagram in Fig.~\ref{fig:4box}. Here, $z$ is a merge-child
+  of $x$ and $y$ if and only if there is $\alpha\ge 0$ such that
+  $p=:\beta_{x|yzu}\ge \alpha a$ and $q=:\beta_{y|xzu}\ge (1-\alpha
+  b)$. Note that the other pair of antipodal spikes, i.e., $c+\delta_u\ge0$
+  and $\delta_z\ge0$ can be chosen arbitrarily. If $r=0$ or $s=0$ the
+  metric is additive and thus an R-metric. Hence it suffices to consider
+  the case that $r,s>0$ and thus $0<\alpha<1$.
+
+  The corresponding non-trivial isolation indices are
+  $r:=\beta_{xz|yu}=(1-\alpha)a$ and $s:=\beta_{yz|xu}=\alpha b$, and thus
+  $a=r/(1-\alpha)$ and $b=s/\alpha$. With the abbreviation
+  $\zeta=\alpha/(1-\alpha)$, this implies $p\ge \zeta s$ and
+  $q\ge (1/\zeta) r$, i.e., $p/s \ge \zeta \ge r/q$. A $\zeta>0$ satisfying
+  these inequalities exists iff $p q \ge r s>0$. Since
+  $\alpha = \zeta/(1+\zeta)$ we have $\alpha\in (0,1)$ for
+  $\zeta\in(0,\infty)$.
+\end{proof}
+
+It follows immediately that the construction of R-metrics in four points is
+not unique: In general both pairs of antipodal points may serve as as
+parents. Furthermore, if $x,y$ are parents, then both $u$ and $z$ can be
+obtained as child of a merge operation.
+
+
+\TODO{maybe a closer look at the cases $a=0$ and $b=0$. This yields a tree
+  in a very strange way!}
+
+
+
+
+\subsection*{Other Stuff} 
+
+
+
+As an immediate consequence we see that an R-metric whose construction
+contains a merge step with $\alpha\in(0,1)$ cannot be additive. To see this
+simply consider the 
+
+
+
+
+
+
+Conversely, an
 R-metric is additive if (and only if) all iterations are branching steps.
+
+
+
+
+
+
+
 
 The iterative construction above contains an obvious source of ambiguity.
 In every interation, a distance increment $\delta_u$ is added for all
@@ -93,29 +220,54 @@ $\delta_u=0$ for all $u\in V\setminus\{x,y,z\}$. In addition we stipulate
 $\delta_x=0$ for $a=0$ and $\delta_y=0$ for $a=1$, i.e., in branch events.
 
 The iterative steps in this modified construction for R-metrics can be
-encoded in an ordered list $\mathcal{S}$ of merge and branch
+encoded as an ordered list $\mathcal{S}$ of merge and branch
 events together with the pertinent parameters: \\
 \begin{itemize} 
-  \item[] A branch event is characterized by $[(x:z),\delta_x,\delta_z]$.
-  \item[] A merge event is characterized by
-    $[(x,y:z),a,\delta_x,\delta_y,\delta_z]$.
-\end{itemize} 
-We call such a list of events that explain $\mathcal{S}$ a scenario. 
-Since every metric on $|V|=3$ points is a additive and this described a
-tree, the first event of $\mathcal{S}$ can always be represented as a
-branch event. It is clear from the definition of R-metrics that every
-scenario $\mathcal{S}$ informs the recursions defining R-metrics and thus
-result in an R-metric. 
+\item[] A branch event is characterized by $[(x:z),\delta_x,\delta_z]$.
+\item[] A merge event is characterized by
+  $[(x,y:z),a,\delta_x,\delta_y,\delta_z]$.
+\end{itemize}
+For each event, $z$ is the offspring, while $x$ (and $y$) are the parent(s)
+of the event. Note that each event has exactly one offspring. We call such
+a list of events that explain $\mathcal{S}$ a \emph{scenario}.  Since every
+metric on $|V|=3$ points is a additive and this described a tree, the first
+event of $\mathcal{S}$ can always be represented as a branch event. It is
+clear from the definition of R-metrics that every scenario $\mathcal{S}$
+informs the recursions defining R-metrics and thus result in an R-metric.
 
-\TODO{can we say something nice about equivalent scenarios? Conjecture:
-  Consider the transitive closure $\prec$ of the relation $\dot\prec$
-  defined by $\varphi\dot\prec\psi$ if event $\varphi$ appears before event
-  $\psi$ in the scenario $\mathcal{S}$ and there is a point $q$ that
-  appears in both $\varphi$ and $\psi$. Then $\mathcal{S}'$ generates the
-  same R-metric if and only if consists of the same events and induces the
-  same partial order $\prec$. Would be nice to prove something like this,
-  since it would imply that the reconstruction of the R-metric is unique in
-  a useful sense.} 
+\TODO{I think we also can uniquely resolve the temporal order of events:
+  If $[x,y':z']$ predates $[x,y'':z'']$ in $\mathcal{S}$, then this
+  temporal order must be maintained in all alternative scenarios.}
+
+Given a scenario $\mathcal{S}$ we say that event $\alpha$ \emph{immediately
+  pre-dates} event $\beta$, in symbols $\alpha \prec\beta$, if the
+offspring of $\alpha$ is a parent of $\beta$. The relation $\prec$ defines
+a directed acyclic graph, and thus a partial order on the set of events,
+which we also denoted by $\prec$ from here on. This \emph{causal event
+  partial order} $\prec$ can be understood as follows: $\alpha\prec\beta$
+if and only if of the parents of $\beta$ is a descendant of $\alpha$. A key
+observation is the following:
+\begin{lemma}
+  Every total order of a set events $\mathcal{S}$ consistent with the
+  causal partial order $\prec$ yields the same R-metric.
+\end{lemma}
+\begin{proof}
+  Obvious ... but maybe give a proof anyway ? 
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 The definition of an R-matrix makes an important, and in practise
 restrictive, assumption: For every merge event $(x,y:z)$ we assume that
@@ -127,41 +279,7 @@ submatrix of an R-metric can be recognized.}
 
 \subsection*{Properties of R-metrics} 
 
-It is easy to see that every additive metric is an R-metric
-\cite{Prohaska:17a}. Hence every metric in $n=3$ points is an R-metric.
-This is no longer true for $n=4$:
-\begin{cxampl}
-Consider the box metric defined by the
-the quandrangle graph with edge length $a,b>0$. There are two distinct ways
-of who $z$ can potentially be produced by a merge of $x$ and $y$:
-\begin{equation}
-  \begin{minipage}[c]{0.7\textwidth}
-    \includegraphics[width=\textwidth]{box1.eps}
-  \end{minipage}
-\end{equation}
-In each case, consider the four induced paths $pqr$ on three of the four
-vertices. For each of them the triangle inequality becomes degenerate,
-i.e., $d_{pq}+d_{qr}-d_{pr}=a+b-(a+b)=0$. In the first case, for instance,
-substituting the recursion equation becomes
-\begin{equation*}
-  \begin{split}
-    0&=d'_{xy}+d'_{yz}-d'_{xz}
-    = d_{xy}+\delta_x+\delta_y + \ d_{xy}+\delta_z+\delta_y -
-    (1-a) d_{xy} - \delta_x - \delta_y \\
-    &= 2a d_{xy} + 2\delta_z \\
-  \end{split}
-\end{equation*}
-Since both $d_{xy}\ge 0$ and $\delta_z\ge 0$, we infer
-$\delta_z=0$. Analogously (in some cases invoking the triangle inequality
-instead of non-negativity of the distances among $\{u,x,y\}$) one finds
-$\delta_u=\delta_x=\delta_y=\delta_z=0$ in both scenarios. 
-In the first case, $r+s=d_{zx} = (1-a) d_{xy} = (1-a) b$ yields
-$r\le 0$, a contradiction. In the second case
-$r+s= d_{zu} = a d_{xu} + (1-a)  d_{yu} =
-a r + (1-a) s$ yields $r=s=0$, again a contradiction. Hence the
-``rectangle metric'' cannot be represented as R-metric.
-\hfill$\qquad\triangleleft$
-\end{cxampl}
+
 
 
 Conversely, it is not hard to construct examples of R-metrics that are not
