@@ -1,0 +1,14 @@
+*.aux
+*.bcf
+*.bib.*
+*.bbl
+*.blg
+*.idx
+*.log
+*.out
+*.gz
+*.dvi
+*.spl
+*.run.xml
+*-blx.bib
+hybrid.pdf
