@@ -1,31 +1,59 @@
-\documentclass{article}
+\documentclass[amsmath]{lni}
 
 \usepackage{xcolor}
 \usepackage[ruled]{algorithm2e}
-%\usepackage{algorithmic}
+% %\usepackage{algorithmic}
 \usepackage{amsmath}
-\usepackage{amsfonts}
+% \usepackage{amsfonts}
+\let\openbox\undefined
 \usepackage{amsthm}
-\usepackage{graphicx}
+% \usepackage{graphicx}
 \newtheorem{theorem}{Theorem}
-\newtheorem{cxampl}[theorem]{Counterexample}
+% \newtheorem{cxampl}[theorem]{Counterexample}
 \newtheorem{lemma}[theorem]{Lemma}
 
 \newcommand{\TODO}[1]{\begingroup\color{red}#1\endgroup}
 \newcommand{\NR}[1]{\begingroup\color{orange}#1\endgroup}
 \newcommand{\PFS}[1]{\begingroup\color{green}#1\endgroup}
 
-
 \begin{document}
 
-\title{Phylogenetics with Mixing Hybrids}
 
+\title[Phylogenetics with Mixing Hybrids]{Reconstruction of Language
+  Phylogenies with ``Mixing''}
+
+\author[Nancy Retzlaff \and Peter F.\ Stadler] {Nancy
+  Retzlaff\footnote{Universität, Abteilung, Straße, Postleitzahl Ort, Land
+    \email{emailaddress@author1}}
+  \and
+%
+  Peter F.\ Stadler\footnote{Dept.\ of Computer Science and
+    Interdisciplinary Center for Bioinformatics, Leipzig University,
+    H{\"a}rtelstra{\ss}e 16-18, 04109 Leipzig, Germany; Max Planck
+    Institute for Mathematics in the Sciences, Inselstra{\ss}e 22, D-04103
+    Leipzig, Germany; Dept.\ of Theoretical Chemistry, University of
+    Vienna, W{\"a}hringerstra{\ss}e 17, A-1090 Wien, Austria; Facultad de
+    Ciencias, Universidad National de Colombia, Bogot{\'a}, Colombia; Santa
+    Fe Institute, 1399 Hyde Park Road, Santa Fe NM 87501, USA
+    \email{studla@tbi.univie.ac.at}}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\startpage{1} % Beginn der Seitenzählung für diesen Beitrag / Start page
+\editor{Herausgeber et al.} % Names of Editors
+\booktitle{Methoden und Anwendungen der Computational Humanities} % Name of book title
+\year{2020}
+%%% \lnidoi{18.18420/provided-by-editor-02} % if known
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \maketitle
 
 
 \begin{abstract}
   super-cool abstract
 \end{abstract}
+
+\begin{keywords}
+Schlagwort1 \and Schlagwort2 %Keyword1 \and Keyword2
+\end{keywords}
 
 \section{Introduction}
 
@@ -52,9 +80,7 @@ occasionally generates novel species.
 \end{itemize}
 
 
-\section{R-Metrics} 
-
-\subsection{Definition} 
+\section{Modelling Distances in the Presence of Mixing} 
 
 In~\cite{Prohaska:17a} we introduced R-metrics by means of a simple
 iterative scheme starting from a pair of points $\{x,y\}$ with a given
@@ -82,130 +108,13 @@ and $y$. If $a=1$ or $a=0$ we speak of a \emph{branch step} since
 $z$ originates as a copy or $x$ or $y$, respectively. As noted in
 \cite{Prohaska:17a}, every additive metric is an R-metric.
 
-\subsection{R-metrics on 4 Points}
-
-Every metric on three points $X=\{x,y,u\}$ is additive and can be written as
-\begin{equation}
-  d_{xy}=a+b \qquad
-  d_{xu}=a+c \qquad
-  d_{yu}=b+c\,. 
-\end{equation}
-By construction, every R-metric on four points thus arises by a single
-split or hybridization step from a metric on three points. W.l.o.g.\ we
-assume that $x$ and $y$ act as parents and obtain on $\{x,y,z,u\}$:
-\begin{equation} 
-  \begin{split}
-  d_{xy}' & = a + b + \delta_x + \delta_y \\  
-  d_{xz}' & = (1-\alpha)(a+b) + \delta_z +\delta_x \\
-  d_{xu}' & = a + c + \delta_x + \delta_u \\
-  d_{yz}' & = \alpha (a+b) + \delta_y + \delta_z \\
-  d_{yu}' & = b + c + \delta_y + \delta_u \\
-  d_{zu}' & = \alpha (a+c) + (1-\alpha)(b+c) + \delta_z + \delta_u
-\end{split}
-\end{equation}
-On the other hand, every metric on 4 points is totally split decomposable
-and has a unique represention as a ``box with spikes'' as shown in
-Fig.~\ref{fig:4box}.
-
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=0.75\textwidth]{n4.eps}
-  \end{center}
-  \caption{General form an R-metric on $\{x,y,z,u\}$ where $z$ arises by
-    merging the parents $x$ and $y$.}
-  \label{fig:4box}
-\end{figure}
-
-The isolation indices for the non-trivial splits are
-obtained from the three distance sums
-\begin{equation*}
-  \begin{split}
-    d_{xy}'+d_{zu}' & =  a + b + (1-\alpha)a + \alpha b + \xi \\
-    d_{xz}'+d_{yu}' & = \alpha (a+b) + b + \xi \\
-    d_{xu}'+d_{yz}' & = (1-\alpha)(a+b) + a + \xi \\
-  \end{split}
-\end{equation*}
-where $\xi=\delta_x+\delta_y+\delta_z+\delta_u$. A short computation shows
-\begin{equation*}
-  \begin{split}
-    (d_{xy}'+d_{zu}')-(d_{xz}'+d_{yu}') &= 2(1-\alpha)a \ge 0 \\
-    (d_{xy}'+d_{zu}')-(d_{xu}'+d_{yz}') &= 2\alpha b \ge 0 \,,\\
-  \end{split}
-\end{equation*}
-whence the non-trivial isolation indices are $\beta_{xz|yu}=(1-\alpha)a$
-and $\beta_{yz|xu}=\alpha b$. The four trivial isolation indices are
-\begin{equation*}
-  \beta_{z|xyu} = \delta_z \qquad
-  \beta_{u|xyz} = c + \delta_u \qquad
-  \beta_{x|yzu} = \alpha a + \delta_x \qquad
-  \beta_{y|xzu} = (1-\alpha) b + \delta_y 
-\end{equation*}
-We note, furthermore, that for $a,b>0$, both isolation indices are strictly
-positive if and only if $0<\alpha<1$. For $\alpha=0$ we obtain the tree of
-the form $(xz)(yu)$ and for $\alpha=1$ we the tree $(yz)(xu)$. In the
-degenerate case in which either $a=0$ or $b=0$ the metric also reduces to a
-tree. 
-
-We are now in the position to characterize R-metrics in terms of its spiked
-box diagram:
-\begin{theorem}
-  A metric on four points with non-trivial isolation isolation indices
-  $r$ and $s$ is an R-metric if an only if there is pair of antipodal
-  trivial splits with isolation indices $p$ and $q$ such that
-  $p q \ge r s$. 
-\end{theorem}
-\begin{proof}
-  Consider the diagram in Fig.~\ref{fig:4box}. Here, $z$ is a merge-child
-  of $x$ and $y$ if and only if there is $\alpha\ge 0$ such that
-  $p=:\beta_{x|yzu}\ge \alpha a$ and $q=:\beta_{y|xzu}\ge (1-\alpha
-  b)$. Note that the other pair of antipodal spikes, i.e., $c+\delta_u\ge0$
-  and $\delta_z\ge0$ can be chosen arbitrarily. If $r=0$ or $s=0$ the
-  metric is additive and thus an R-metric. Hence it suffices to consider
-  the case that $r,s>0$ and thus $0<\alpha<1$.
-
-  The corresponding non-trivial isolation indices are
-  $r:=\beta_{xz|yu}=(1-\alpha)a$ and $s:=\beta_{yz|xu}=\alpha b$, and thus
-  $a=r/(1-\alpha)$ and $b=s/\alpha$. With the abbreviation
-  $\zeta=\alpha/(1-\alpha)$, this implies $p\ge \zeta s$ and
-  $q\ge (1/\zeta) r$, i.e., $p/s \ge \zeta \ge r/q$. A $\zeta>0$ satisfying
-  these inequalities exists iff $p q \ge r s>0$. Since
-  $\alpha = \zeta/(1+\zeta)$ we have $\alpha\in (0,1)$ for
-  $\zeta\in(0,\infty)$.
-\end{proof}
-
-It follows immediately that the construction of R-metrics in four points is
-not unique: In general both pairs of antipodal points may serve as as
-parents. Furthermore, if $x,y$ are parents, then both $u$ and $z$ can be
-obtained as child of a merge operation.
+The definition of an R-matrix makes an important, and in practise
+restrictive, assumption: For every merge event $(x,y:z)$ we assume that
+there are surviving descendants of $x$, $y$, and $z$ that are not products
+of a merge.
 
 
-\TODO{maybe a closer look at the cases $a=0$ and $b=0$. This yields a tree
-  in a very strange way!}
-
-
-
-
-\subsection*{Other Stuff} 
-
-
-
-As an immediate consequence we see that an R-metric whose construction
-contains a merge step with $\alpha\in(0,1)$ cannot be additive. To see this
-simply consider the 
-
-
-
-
-
-
-Conversely, an
-R-metric is additive if (and only if) all iterations are branching steps.
-
-
-
-
-
-
+\TODO{keep the following a bit more informal} 
 
 
 The iterative construction above contains an obvious source of ambiguity.
@@ -255,66 +164,12 @@ observation is the following:
   Obvious ... but maybe give a proof anyway ? 
 \end{proof}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-The definition of an R-matrix makes an important, and in practise
-restrictive, assumption: For every merge event $(x,y:z)$ we assume that
-there are surviving descendants of $x$, $y$, and $z$ that are not products
-of a merge.
-
-\TODO{As an open question for the future, we thus ask how an arbitrary 
-submatrix of an R-metric can be recognized.} 
-
-\subsection*{Properties of R-metrics} 
-
-
-
-
-Conversely, it is not hard to construct examples of R-metrics that are not
-split-decomposable.
-
-
-
-
-
-
-
-\TODO{It does not seem to be very easy to check whether R-metric are 
-totally decomposable or not. There is a reasonably easy 5-point condition
-for that, however:
-
-Set 
-\begin{equation} 
-  \alpha(tu|vw) := 
-  \max\left\{ d_{tu}+d_{vw}, d_{tv}+d_{uw}, d_{tw}+d_{vu} \right\} -
-             (d_{tu}+d_{vw})
-\end{equation} 
-
-Then Thm.6 of \cite{Bandelt:92} states that the metric is \emph{totally
-  decomposable} iff and only if for all $t,u,v,w,x\in V$ holds 
-\begin{equation} 
-  \alpha(tu|vw) \le \alpha(tx|vw)+\alpha(tu|vx)
-\end{equation} 
-
-CAN YOU PLEASE CHECK THIS NUMBERICALLY as a first step. If we see that the 
-R-metrics are totally decomposable in a large number of randomly generated
-examples it will be worth while to show that analytically, presumably by 
-proving that our construction the inequality above whenever.
-}
+\TODO{... up to here} 
 
 \section{From Recognition to Approximation} 
+
+\TODO{Nancy, please check what of the following you have actually
+  implemented.} 
 
 \subsection{Recognition of R-metrics}
 
@@ -580,24 +435,14 @@ top candidates in the list of potential merges.
 It remains to determine a rational scheme for comparting merge and branch
 steps.
 
-\TODO{construction ahead} 
+\section{Showcase Application}
+
+\TODO{Nancy}
 
 \section{Stuff the needs to be done} 
 
-\begin{enumerate}
- \item \TODO{check whether all brackets are correctly set} 
- \item \TODO{check whether $d_{xy}$ conforms to the triangle inequality
-     $d_{xy} \leq d_{ux} + d_{uy}$?}  \PFS{theoretically taken care of, see
-     triangle correction problem mentioned above}
- \item \TODO{Wenn Baum, haben wir das richtige Ergebnis? (sanity check) 
-     Was passiert bei Cherries?} 
-   \PFS{theoretically yes: if tree, we find only branch events -- this is 
-     already argued in \cite{Prohaska:17a}}
- \item \TODO{NR: Test on simulated noisy data} \\
-\end{enumerate}
 
 
-\bibliographystyle{abbrv}      
 \bibliography{hybrid}   
 
 \end{document}
