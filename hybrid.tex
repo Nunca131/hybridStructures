@@ -57,20 +57,38 @@ Schlagwort1 \and Schlagwort2 %Keyword1 \and Keyword2
 
 \section{Introduction}
 
-Classical phylogenetics assumes an underlying branching process that
-occasionally generates novel species. 
+Phylogenetic approaches, that is, the reconstruction of historical
+relationships from present-day observations has a long history in both
+linguistics and biology. Most commonly, a tree models is assumed in which
+lineages separate and then evolve essentially independently of each other.
+While this is a very good approximation in most situations in both
+biological and language evolution (borrowing nonwithstanding) there are
+clear exceptions that cannot be captured by the tree model. In biology,
+hybridization -- the production of offspring by mating two parents from
+different varieties or species -- is not in particular in plants. In
+languages, creoles or the English vocabulary serve as example. Albeit a
+Germanic language, the English lexicon contains 29\% Latin and 29\% French
+words, while only 25\% trace back to its Germanic origin
+\cite{Finkenstaedt:73}.
+
+
+As time proceeds, evolutionary events such as mutations of DNA nucleotides
+and lineage-specific loss of genes or cognate words slowly increses the
+dissimilarity of the evolving entities. In the tree model, so-called
+additive distance measures $d(x,y)$ keep track of the number of events that
+separate species or languages $x$ and $y$ from each other. 
+\TODO{[...]}
+
+
 
 
 
 \begin{itemize}
-\item evolution of gene clusters as in~\cite{Prohaska:17a}
  \item evolutionary events considered where either duplication 
  or recombination events (since losses cannot be observed when 
  we there is only one species under consideration)
  \item recombination events can happen due to unequal crossing
  over during mitosis
- \item if the breakpoint is in a gene, the resulting gene is
- a recombinant of its two parent genes ($x$ and $y$) who are
  considered to be adjacent
  \item here: lifting adjacency constraint of ''recombination''
  \item application to languages: e.g. English lexicon is said
@@ -82,7 +100,7 @@ occasionally generates novel species.
 
 \section{Modelling Distances in the Presence of Mixing} 
 
-In~\cite{Prohaska:17a} we introduced R-metrics by means of a simple
+In~\cite{Prohaska:17a} R-metrics were introduced by means of a simple
 iterative scheme starting from a pair of points $\{x,y\}$ with a given
 distance $d_{xy}$.  First, an additional point $z$ is inserted as a
 ``mixture'' of two parents $x$ and $y$ with a mixture ratio $a$. We assume
