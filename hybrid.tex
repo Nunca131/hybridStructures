@@ -71,185 +71,126 @@ Germanic language, the English lexicon contains 29\% Latin and 29\% French
 words, while only 25\% trace back to its Germanic origin
 \cite{Finkenstaedt:73}.
 
-
 As time proceeds, evolutionary events such as mutations of DNA nucleotides
 and lineage-specific loss of genes or cognate words slowly increses the
 dissimilarity of the evolving entities. In the tree model, so-called
 additive distance measures $d(x,y)$ keep track of the number of events that
-separate species or languages $x$ and $y$ from each other. 
-\TODO{[...]}
+separate species or languages $x$ and $y$ from each other.  It is well
+known that a unique tree can reconstructed from additive distance data
+\cite{SimoesPereira:69}. Real-life data, however, are rarely if ever
+additive due to unavoidable noise and measurement errors, although they are
+often ``tree-like'' enough to allow the inference of a tree that is a least
+a very good approximation to the true evolutionary history
+\cite{Atteson:99}.
 
-
-
-
-
-\begin{itemize}
- \item evolutionary events considered where either duplication 
- or recombination events (since losses cannot be observed when 
- we there is only one species under consideration)
- \item recombination events can happen due to unequal crossing
- over during mitosis
- considered to be adjacent
- \item here: lifting adjacency constraint of ''recombination''
- \item application to languages: e.g. English lexicon is said
- to contain 29\% Latin and as well as 29\% French words that 
- did not derive from its Germanic root which only contributes 
- with 25\%~\cite{Finkenstaedt:73}.
-\end{itemize}
-
+In the presence of the hybridization/mixing events, however, methods that
+reconstruct trees must fail. In \cite{Prohaska:17a}, we introduced a simple
+extension of the tree model describing the evolution of gene clusters by a
+process known as non-homologous crossover, which leads to new genes whose
+sequences consist of parts inherited from two ancestors that are adjacent
+in the genome. The same model for the evolution of distances also applies
+to mixing events in general by just relaxing the constraint that the
+ancestors are adjacent on a linear genome, see Section~\ref{sect:R}. In
+\cite{Prohaska:17a} we also devised a recognition algorithm that implicitly
+reconstructs a sequence of divergence and mixing events that explains a
+given distance matrix. Here we generalize this idea and provide an
+approximation algorithm that is capable of inferring a sequence of events
+also from imperfect data.
 
 \section{Modelling Distances in the Presence of Mixing} 
+\label{sect:R}
 
-In~\cite{Prohaska:17a} R-metrics were introduced by means of a simple
-iterative scheme starting from a pair of points $\{x,y\}$ with a given
-distance $d_{xy}$.  First, an additional point $z$ is inserted as a
-``mixture'' of two parents $x$ and $y$ with a mixture ratio $a$. We assume
-that the distance of $d_{zu}$ correspondinly is a mixture of $d_{xu}$ and
-$d_{yu}$. More precisely, we assume that
+We consider evolution as an iterative process. Instead of speaking of genes
+or languages specifically, we follow the convention of the phylogenetics
+literature use the neutral term \emph{taxon}. Each taxon is associated with
+data, such as the genomic DNA sequence of representative organism, a
+collection of grammatics features, or a word list. With time these data
+slowly change independently of each other, thus increasing the distance
+$d(x,y)$ between two taxa by increments $\delta_x$ and $\delta_y$ that are
+determined by each taxons individual rate of change. Once in a while, a
+taxon is subdivided into two separate lineages that henceforth will evolve
+independently of each other. This amounts to introducing a new taxon $z$ as
+an ``offspring'' of $x$, which initially is virtually indistinguishable
+from $x$. This is $d(x,z)=(x,y)$ for all taxa $y\ne x,z$ and $d(z,x)=0$.
+After this ``speciation'' event, each taxon evolves independently, thus
+incrementing the distances. It is not difficult to prove that this process
+generates an additive distance matrix, and all additive distances matrices
+can be generated in the manner \cite{Prohaska:17a}. Therefore, this simple
+process amounts to the tree model, expressed in terms of the observable
+distances between taxa.
+
+A mixing or hybridization event can also be modeled in this setting
+\cite{Prohaska:17a}. A hybrid $z$ is a mixture of two parents $x$ and $y$,
+with $x$ contributing a fraction $\alpha$ and $y$ contributing the
+remaining fraction $(1-\alpha)$. Consider the distances immediately after
+the mixing event, i.e., before the lineages have time to acquire additional
+changes. Then $d(x,z)=\alpha 0 + (1-\alpha) d(x,y)$ and
+$d(y,z) = \alpha d(x,y) + (1-\alpha 0)$, since only the part of $z$
+deriving from $y$ contributes to the distance $d(x,z)$ and \textit{vice
+  versa}. The distance of any other taxon $u$ to the hybrid $z$ is is the
+weighted average $d(u,z)=\alpha d(u,x)+(1-\alpha) d(u,y)$ of $u$ to its
+parents $x$ and $y$. Note that for $\alpha=0$, $z$ is an identical
+offspring of $y$, while for $\alpha=1$ it is an identical offspring of
+$x$. The tree model outline in the previous paragraph thus is a special
+case.
+
+More formally we describe each step as follows: pick a pair of parents
+$x,y\in V$ and a mixing ration $\alpha$, and pick distance
+increments $\delta_u$ for all $u\in V\cup\{z\}$. Then add $z$ to $V$
+and compute updated distances $d'$ as follows: 
 \begin{equation} 
 \begin{split} 
-  d_{zx} & = (1-\alpha)  d_{xy} \\
-  d_{zy} & =   \alpha    d_{xy} \\
-  d_{zu} & =   \alpha    d_{xu} + (1-\alpha)  d_{yu} \quad\textrm{for all}\ 
-                     u\in V\setminus\{ x,y \}
+  d_{zx}' & = (1-\alpha)  d_{xy} +\delta_x + \delta_z \\
+  d_{zy}' & =   \alpha    d_{xy} +\delta_y + \delta_z  \\
+  d_{zu}' & =   \alpha    d_{xu} + (1-\alpha)  d_{yu} + \delta_u + \delta_z
+  \quad\textrm{for all}  u\in V\setminus\{ x,y,z \}\\
+  d_{uv}' & = d_{uv}+\delta_u+\delta_v
+  \quad\textrm{for all}  u,v\in V\setminus\{ x,y,z \}
 \end{split}
-\end{equation} 
-Then all points diverge with arbitrary rates, i.e., 
-\begin{equation} 
-  d_{pq}' = d_{pq} + \delta_p + \delta_q \quad\textrm{for all}\ 
-  p,q \in V\cup\{z\} 
-\end{equation} 
-We say that a metric distance $d$ is an R-metric if it can be constructed
-in this manner. An iteration with $a\in(0,1)$ will be referred to as
-\emph{merge step}, since the product $z$ is a mixture of the parents $x$
-and $y$. If $a=1$ or $a=0$ we speak of a \emph{branch step} since
-$z$ originates as a copy or $x$ or $y$, respectively. As noted in
-\cite{Prohaska:17a}, every additive metric is an R-metric.
+\end{equation}
+it is not difficult to show that $d'$ is a metric distance measure whenever
+$d$ was a metric distance. We say that a distance is an \emph{R-metric} if
+it can be constructed step-by-by as outlined above. In particular, as we
+have seen, every additive metric is an R-metric, i.e., R-metric are a
+proper generalization of tree distances. 
 
-The definition of an R-matrix makes an important, and in practise
-restrictive, assumption: For every merge event $(x,y:z)$ we assume that
-there are surviving descendants of $x$, $y$, and $z$ that are not products
-of a merge.
+Our goal is now to find a way to approximate a given distance as an
+R-metric, and more precisely to give a sequence of steps of form
+$(z\leftarrow x)$ and $(z\leftarrow x,y)$ in which offsprings where
+produced by splitting from a single parent or by the mixing of two
+parents. First we note that this cannot be done in an unambiguous manner
+for less than five taxa if mixing steps may be involved. Numerical data
+strongly suggest, however, that the reconstruction of the relative sequence
+of events becomes unambigous beyond this unresolvable ancestral ``core''
+\cite{Prohaska:17a}. 
 
-
-\TODO{keep the following a bit more informal} 
-
-
-The iterative construction above contains an obvious source of ambiguity.
-In every interation, a distance increment $\delta_u$ is added for all
-points, including also the ones that are not involved in a branch or merge
-event. Therefore several increments can be added to a point in consecutive
-non-event iterations. It is clear that there is no way in which these
-contributions can be disentangled: only their sum -- more precisely the sum
-of $\delta_u$-value added between two consecutive events involving $u$ can
-possibly be identified. Therefore we modify the construction rule such that
-$\delta_u=0$ for all $u\in V\setminus\{x,y,z\}$. In addition we stipulate
-$\delta_x=0$ for $a=0$ and $\delta_y=0$ for $a=1$, i.e., in branch events.
-
-The iterative steps in this modified construction for R-metrics can be
-encoded as an ordered list $\mathcal{S}$ of merge and branch
-events together with the pertinent parameters: \\
-\begin{itemize} 
-\item[] A branch event is characterized by $[(x:z),\delta_x,\delta_z]$.
-\item[] A merge event is characterized by
-  $[(x,y:z),a,\delta_x,\delta_y,\delta_z]$.
-\end{itemize}
-For each event, $z$ is the offspring, while $x$ (and $y$) are the parent(s)
-of the event. Note that each event has exactly one offspring. We call such
-a list of events that explain $\mathcal{S}$ a \emph{scenario}.  Since every
-metric on $|V|=3$ points is a additive and this described a tree, the first
-event of $\mathcal{S}$ can always be represented as a branch event. It is
-clear from the definition of R-metrics that every scenario $\mathcal{S}$
-informs the recursions defining R-metrics and thus result in an R-metric.
-
-\TODO{I think we also can uniquely resolve the temporal order of events:
-  If $[x,y':z']$ predates $[x,y'':z'']$ in $\mathcal{S}$, then this
-  temporal order must be maintained in all alternative scenarios.}
-
-Given a scenario $\mathcal{S}$ we say that event $\alpha$ \emph{immediately
-  pre-dates} event $\beta$, in symbols $\alpha \prec\beta$, if the
-offspring of $\alpha$ is a parent of $\beta$. The relation $\prec$ defines
-a directed acyclic graph, and thus a partial order on the set of events,
-which we also denoted by $\prec$ from here on. This \emph{causal event
-  partial order} $\prec$ can be understood as follows: $\alpha\prec\beta$
-if and only if of the parents of $\beta$ is a descendant of $\alpha$. A key
-observation is the following:
-\begin{lemma}
-  Every total order of a set events $\mathcal{S}$ consistent with the
-  causal partial order $\prec$ yields the same R-metric.
-\end{lemma}
-\begin{proof}
-  Obvious ... but maybe give a proof anyway ? 
-\end{proof}
-
-\TODO{... up to here} 
+Algorithm~\ref{alg:recogR} \cite{Prohaska:17a} in the appendix in essence
+reverts the recursive construction outlined above. In each step, it tries
+to identify a pair $(x,z)$ corresponding to a tree-like split of lineages,
+or a triple $(x,y,z)$ corresponding to a merge event. In the latter case,
+the mixing ratio $\alpha$ needs to be computed. In the general case, the
+same result must be obtained independent of which ``outgroups'' beyond $z$
+and the parents $x$ and $y$ are used, thus imposing constraints that are
+used to identify the correct mixing events. There may by more than one
+candidate event. However, these candidates must not involve common taxa. In
+other words, for each lineage, the order of speciation and mixing events
+that it participates in can be determined from the distance data. We
+emphasize that at present this is a conjecture supported by simulation. A
+rigorous mathematical analysis of this issue is ongoing research.  Since
+Algorithm~\ref{alg:recogR} works only for exact, error-free data. Here, we
+stepwisely turn it into an approximation algorithms that, given a distance
+matrix an input, computes a sequence of events and a corresponding
+R-metric.
 
 \section{From Recognition to Approximation} 
+
+
+
+
 
 \TODO{Nancy, please check what of the following you have actually
   implemented.} 
 
-\subsection{Recognition of R-metrics}
-
-In \cite{Prohaska:17a} we showed that R-metrics can be recognized using
-Alg.~\ref{alg:recogR} in $O(|V|^6)$ time.
-
-We call the result $z$ of a merge event $(x,y:z)$ terminal this merging
-step was not followed by another merge or branch event involving $z$. A
-branch event $(x:z)$ is terminal if neither of its descendants was subject
-to a further merge or branch event. It is clear that every R-metric
-contains at least one merge or branch event. Alg.~\ref{alg:recogR}
-\cite{Prohaska:17a} recognizes R-metrics $O(|V|^6)$ time. In each
-interation it identifies a terminal merge or branch event and reduces the
-problem by eliminating one of the two descendants of a branch event or the
-mixed offspring of a merge event. It does not quite reconstruct the
-individual interations faithfully since in the case of terminal branch
-events $(x:z)$ no effort is made to precisely locate the common ancestor of
-$x$ and $z$. As we shall see below, this can be done with moderate effort.
-We also note that in the construction recipe a constant $\delta_u$ is added
-in each to iteration to the branch of every point $u$, in particular also
-those $u$ that are not involved in a merge or branch event. These
-individual steps cannot be resolved: only the total increase in distance
-between two merge or branch events can be resolved. Therefore, we set
-$\delta_u=0$ for all $u$ not involved in an event. 
-
-\begin{algorithm}[H]
-\caption{Recognition of R-metrics}
-\label{alg:recogR}
-\SetAlgoLined
-
-\While{$|V|>3$}{
-  \For{$\{x,y,z\} \in V$}{
-    \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
-      $a_{u,v} := 
-      \frac{(d'_{uz}+d'_{vy})-(d'_{vz}+d'_{uy})}{(d'_{ux}+d'_{vy})-(d'_{vx}+d'_{uy})}$\;
-    }
-    \If{$\forall a_{u,v}: a_{u,v}=a$ \,\&\, $a\in [0,1]$}{
-      \If{$a \neq 0,1$}{
-        \tcc{merge $(x,y:z)$} 
-        $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
-        $d_{xy} = \frac{(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})-
-          2 \delta_z + a d'_{xz}+(1-a) d'_{yz}}{2a(1-a)}$\;
-        $\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
-        $\delta_y = d'_{yz} -   a   d_{xy} - \delta_z$\;
-        $\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
-        $d_{up} = d_{pu} -\delta_p$\;
-      }
-      \tcc{If $a=1$ then split $(x:z)$} 
-      \tcc{If $a=0$ then split $(y:z)$}
-%      \TODO{why are the things above in a comment?} Because for
-%      recognition only we don't do anything except dropping $z$
-      $V\leftarrow V\setminus\{z\}$\;
-      \textbf{continue}\;
-    }  
-  }
-  \tcc{ no split or merge found for $\{x,y,z\}$ } 
-  \Return \emph{\textbf{false}}
-}
-\Return \emph{\textbf{true}}
-\end{algorithm}
-
-\subsection{Extraction of Branch and Merge Scenarios} 
 
 Our goal here is to modify Alg.~\ref{alg:recogR} into a consistent
 approximation algorithm. More precisely, we set out to construct an
@@ -265,7 +206,10 @@ the second stage, this scenario is converted back into a metric distance
 $d(\mathcal{S})$.
 
 The non-trivial part is the inference of a scenario $\mathcal{S}$ from an
-arbitrary metric $d$ on $V$. Given a metric distance matrix $d$, we say
+arbitrary metric $d$ on $V$.
+
+
+Given a metric distance matrix $d$, we say
 that a candidate event $(x,y:z)$ is \emph{perfect} if $a_{uv}$ as defined
 in Alg.~\ref{alg:recogR} is the same for all $u,v\in V\setminus\{x,y,z\}$
 and satisfied $a\in [0,1]$. If $a=1$ or $a=0$, we speak of perfect branch
@@ -459,9 +403,46 @@ steps.
 
 \section{Stuff the needs to be done} 
 
-
-
 \bibliography{hybrid}   
+\newpage
+
+\begin{algorithm}[H]
+\caption{Recognition of R-metrics}
+\label{alg:recogR}
+\SetAlgoLined
+
+\While{$|V|>3$}{
+  \For{$\{x,y,z\} \in V$}{
+    \For{$\{u,v\} \in V\setminus\{x,y,z\}$}{
+      $a_{u,v} := 
+      \frac{(d'_{uz}+d'_{vy})-(d'_{vz}+d'_{uy})}{(d'_{ux}+d'_{vy})-(d'_{vx}+d'_{uy})}$\;
+    }
+    \If{$\forall a_{u,v}: a_{u,v}=\alpha$ \,\&\, $\alpha\in [0,1]$}{
+      \If{$\alpha \neq 0,1$}{
+        \tcc{merge $(x,y:z)$} 
+        $\delta_z = \frac{1}{2}(d'_{xz}+d'_{yz}-d'_{xy})$\;
+        $d_{xy} = \frac{(d'_{uz}-a d'_{ux}-(1-a) d'_{uy})-
+          2 \delta_z + a d'_{xz}+(1-a) d'_{yz}}{2a(1-a)}$\;
+        $\delta_x = d'_{xz} - (1-a) d_{xy} - \delta_z$\;
+        $\delta_y = d'_{yz} -   a   d_{xy} - \delta_z$\;
+        $\forall u\in V\setminus\{x,y,z\}$ and $\forall p\in\{x,y\}$ set   
+        $d_{up} = d_{pu} -\delta_p$\;
+      }
+      \tcc{If $a=1$ then split $(x:z)$} 
+      \tcc{If $a=0$ then split $(y:z)$}
+%      \TODO{why are the things above in a comment?} Because for
+%      recognition only we don't do anything except dropping $z$
+      $V\leftarrow V\setminus\{z\}$\;
+      \textbf{continue}\;
+    }  
+  }
+  \tcc{ no split or merge found for $\{x,y,z\}$ } 
+  \Return \emph{\textbf{false}}
+}
+\Return \emph{\textbf{true}}
+\end{algorithm}
+
+
 
 \end{document}
 
