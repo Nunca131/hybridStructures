@@ -63,7 +63,35 @@ for(i in 1:length(intersection)){
 for f in *.gz 
 do
 t=$(grep $f threshold | awk '{print $2}')                      
-zgrep "IDS" $f | LC_ALL=C awk '$7 >= theta' theta=$t  > $f.aboveT
+zgrep "IDS" $f | LC_ALL=C awk 'if($7 >= theta) print $7' theta=$t  > $f.aboveT
 done
 
 ## 6. obtain distances using R
+
+files = list.files(getwd(), pattern="aboveT")
+sims = numeric(length(files))
+for(i in 1:length(files)){
+ t = read.table(files[i])
+ sims[i] = sum(unlist(t))/length(unlist(t))
+}
+
+sim = matrix(0,14,14)
+sim[upper.tri(sim,diag=TRUE)] <- sims
+
+for (i in 2:14){
+ for (j in 1:i-1){
+  sim[i,j] = sim[j,i]}}
+
+dist = matrix(0,14,14)
+
+for (i in 1:14){
+ for (j in 1:14){
+  dist[i,j] = sim[i,i] + sim[j,j] - 2*sim[i,j]
+ }
+}
+
+colnames(dist) <- c("Catalan", "Danish", "Dutch", "English", "French", "German", "Italian", "Latin", "OldEnglish", "OldHighGerman", "Portuguese", "Romanian", "Spanish", "Swedish")
+rownames(dist) <- c("Catalan", "Danish", "Dutch", "English", "French", "German", "Italian", "Latin", "OldEnglish", "OldHighGerman", "Portuguese", "Romanian", "Spanish", "Swedish")
+
+write.table(dist, file="distances", row.names=TRUE, col.names=TRUE)
+
