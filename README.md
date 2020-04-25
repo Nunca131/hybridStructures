@@ -1,12 +1,12 @@
 # hybridStructures
 
-# Download data from IDS
+## 1. Download data from IDS
 
-# pre-filter to obtain machine-readable word lists
+## 2. pre-filter to obtain machine-readable word lists
 
-# use jAligns GotohBigram version to obtain alignments
+## 3. use jAligns GotohBigram version to obtain alignments
 
-# Obtain thresholds using R
+## 4. Obtain thresholds using R
 
 library(mixtools)
 files = list.files(getwd(), pattern="sm")
@@ -58,7 +58,7 @@ for(i in 1:length(intersection)){
 }
 
 
-#Filtering on command line
+## 5. Filtering on command line
 
 for f in *.gz 
 do
@@ -66,4 +66,4 @@ t=$(grep $f threshold | awk '{print $2}')
 zgrep "IDS" $f | LC_ALL=C awk '$7 >= theta' theta=$t  > $f.aboveT
 done
 
-#obtain distances using R
+## 6. obtain distances using R
