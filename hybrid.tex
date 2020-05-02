@@ -210,9 +210,10 @@ auxiliary quantity $q_{xz}:= d'_{xz}-r_z-r_x$. Note that these are exactly
 the same rules for the choice of the cherry and the computation of the
 branch lengths $\delta_x$ and $\delta_z$ as in the famous Neighbor-Joining
 (NJ) algorithm \cite{Saitou:87}. In contrast to NJ, however, we pick the
-cherry $(x:z)$ only if the values of $d'_{uz}-d'_{ux}$ are sufficiently
-similar for all $u\ne x,z$, i.e., if the variance of these terms is small
-enough. Let us defer the decision of what is small enough for later.
+cherry $(x:z)$ only if the values of $S_{xz}:=d'_{xu}-d'_{zu}$ are
+sufficiently similar for all $u\ne x,z$, i.e., if the variance of these
+terms is small enough. Let us defer the decision of what is small enough
+for later.
 
 If we cannot pick a cherry, we have to reverse a mixing step $(x,y:z)$. The
 key observation, equ.(9) in \cite{Prohaska:18a}, is that in this case the
@@ -229,22 +230,45 @@ $\alpha$ is computed one can compute
   \begin{split}
     \delta_z & = (d'_{xz}+d'_{yz}-d'_{xy})/2  \\
     \delta_x & = (d'_{xz}-(1-\alpha)d'_{xy} + S_{xyz})/(2\alpha) \\
-    \delta_y & = (d'_{xz}-\alpha d'_{xy} +    S_{xyz})/(2(1-\alpha)) \\
+    \delta_y & = (d'_{yz}-\alpha d'_{xy} +    S_{xyz})/(2(1-\alpha)) \\
   \end{split}
 \end{equation}
-where $S_{xyz}=\alpha d'_{xu}+(1-\alpha)d'_{yu}-d'_{zu}$ must be the same for
-all $u\ne x,y,z$. Of course, we estimate $S_{xyz}$ as the average over all
-$u$ and use the variance of $S_{xyz}$ as a quality measure.
+where $S_{xyz}:=\alpha d'_{xu}+(1-\alpha)d'_{yu}-d'_{zu}$ must be the same
+for all $u\ne x,y,z$. Of course, we estimate $S_{xyz}$ as the average over
+all $u$ and use the variance of $S_{xyz}$ as a quality measure.
 
 In order to identify the equivalent of a cherry, we need to identify a
 triple $(x,y:z)$ such $\delta_z$ is minimal over all choices of parents
-$x,y$ $\delta_x$ is minimal over all choices of $y,z$, and $\delta_y$ is
+$x,y$, $\delta_x$ is minimal over all choices of $y,z$, and $\delta_y$ is
 minimal over all choices of $x,z$. In addition, there none of the potential
 cherries $(x:y)$, $(x:z)$, and $(y:z)$ are allowed to produce shorter
 branches $\delta_z$, $\delta_y$ and $\delta_z$. 
 
 \TODO{Is there a nice efficient way to find the outermost merge similar
   to the auxiliary in neighborjoining ?}
+
+In order to measure the quality of the fit to the data, we may compare the
+variance of $S_{xz} = d'_{xu}-d'_{zu}$ for the prospective cherry and the
+$S_{xyx} = \alpha d'_{xu}+(1-\alpha)d'_{yu}-d'_{zu}$ for the prospective
+merge, provided the estimate $\alpha$ is sufficiently far away from $0$ or
+$1$.
+
+
+
+
+
+
+
+
+
+
+\TODO{Probably we should directly compare how well an outer-most mixing
+  event $(x,y:z)$ compares to two branching events $(x:(y:x))$}
+
+\TODO{Pragmatische Idee: either $(x:z)$ is a true cherry or there is
+  a $y$ such that that $(x,y:z)$ is mixing event. Thus we only need to
+  find a $y$ that fits the data better than the cherry.}  
+  
 
 
 
